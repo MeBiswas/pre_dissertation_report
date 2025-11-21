@@ -1,0 +1,23 @@
+% ============================
+% CUSTOM MACROS & SETTINGS
+% ============================
+
+% Glossaries
+\renewcommand{\acronymname}{List of Abbreviations}
+\glsdisableentry{main}
+\setglossarystyle{list}
+\makeglossaries
+\loadglsentries{glossaries.tex}
+
+% Bibliography file
+\addbibresource{references.bib}
+
+% Fix biblatex: volume+number macro
+\AtBeginDocument{%
+  \providebibmacro{volume+number}{%
+    \printfield{volume}%
+    \iffieldundef{number}{}{%
+      \addcomma\space\printfield{number}%
+    }%
+  }%
+}
