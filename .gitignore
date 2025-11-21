@@ -1,4 +1,24 @@
-.vscode/
 .DS_Store
-node_modules/
-dist/
+
+# LaTeX build files
+build/
+*.synctex.gz
+*.pdf
+*.aux
+*.log
+*.out
+*.bbl
+*.blg
+*.bcf
+*.run.xml
+*.toc
+*.lof
+*.lot
+*.acr
+*.acn
+*.alg
+*.glg
+*.glo
+*.gls
+*.ist
+*.xdy
