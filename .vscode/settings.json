@@ -50,17 +50,8 @@
 
   // 4. Viewer + behavior
   "latex-workshop.view.pdf.viewer": "tab",
+  "latex-workshop.latex.search.root": "root",
   "latex-workshop.latex.autoBuild.run": "onSave",
   "latex-workshop.latex.rootFile.useSubFile": false,
   "latex-workshop.latex.rootFile.doNotPrompt": true,
-
-  // 5. Additional settings
-  "latex-workshop.latex.clean.enabled": true,
-  "latex-workshop.latex.clean.subfolder.enabled": true,
-  "latex-workshop.latex.clean.fileTypes": [
-    "*.aux", "*.bbl", "*.bcf", "*.blg", "*.lof",
-    "*.lot", "*.out", "*.toc", "*.acn", "*.acr",
-    "*.alg", "*.glg", "*.glo", "*.gls", "*.ist",
-    "*.run.xml", "*.synctex.gz"
-  ],
 }

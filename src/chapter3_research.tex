@@ -12,7 +12,7 @@
     European credit card dataset \cite{kaggle_dataset} (the standard 30 features V1–V28, Time, Amount; fraud label). Use the original data with preprocessing as a baseline, and also consider a SMOTE/ADASYN-augmented version for comparison.
 
 \subsection{Experimental design}
-    \begin{itemize}
+    \begin{description}
         \item \textbf{Baseline models:} Logistic Regression (\acrshort{lr}), Decision Tree (\acrshort{dt}), Random Forest (\acrshort{rf}), XGBoost (\acrshort{xgboost}), SVM (\acrshort{svm}), K-Nearest Neighbors (\acrshort{knn}), Gaussian Naive Bayes (\acrshort{gaussiannb}) as a \acrlong{ml} baseline.
         \item \textbf{Feature handling:} Standardize features.
         \item \textbf{Balancing strategies:}
@@ -60,4 +60,4 @@
                 \item \textbf{Reproducibility:} Jupyter/Notebook pipelines with requirements.txt; a reproducible workflow (e.g., Makefile or a simple Python script with config files).
                 \item Version control (Git) for code management.
             \end{itemize}
-    \end{itemize}
+    \end{description}
