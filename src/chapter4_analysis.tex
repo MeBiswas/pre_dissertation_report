@@ -1,0 +1,72 @@
+% !TeX root = ../main.tex
+
+\section{Data Analysis and Interpretation}
+
+    \subsection{Tables and figures}
+    \begin{itemize}
+        \item Model-by-model performance table: model, balancing strategy, FS method (if any), AUC, F1, recall, precision, MCC, training time.
+        \item ROC curves and precision-recall curves for top-performing models.
+        \item Feature-importance charts for tree-based models; SHAP summary plots for interpretability.
+        \item Cross-dataset generalization results: how models trained on European data perform on the second dataset, with notes on the need for retraining vs. fine-tuning.
+    \end{itemize}
+
+    \begin{table}[H]
+        \centering
+        \begin{tabular}{|c|c|c|}
+            \hline
+            \textbf{Model} & \textbf{Accuracy (\%)} & \textbf{F1 Score} \\
+            \hline
+            Random Forest & 92.5 & 0.89 \\
+            Support Vector Machine & 90.3 & 0.85 \\
+            Logistic Regression & 88.7 & 0.82 \\
+            Multi-Layer Perceptron & 91.2 & 0.87 \\
+            Gaussian Mixture Model & 85.4 & 0.80 \\
+            \hline
+        \end{tabular}
+        \caption{Performance Metrics of Different Models}
+        \label{tab:model_performance}
+    \end{table}
+
+    \begin{figure}[H]
+        \centering
+            \begin{figure}[H]
+                \centering
+                \begin{tikzpicture}[
+                    node distance=1.8cm,
+                    every node/.style={font=\small},
+                    process/.style={rectangle, rounded corners, minimum width=4cm, minimum height=1cm, draw=black, thick, fill=gray!5, align=center},
+                    arrow/.style={thick,->,>=stealth}
+                ]
+                
+                    % Nodes
+                    \node (input) [process] {Raw Dataset\\(Backblaze SMART Data)};
+                    \node (clean) [process, below=of input] {Data Cleaning \& Preprocessing\\(Missing values, normalization)};
+                    \node (gan) [process, below=of clean] {Hybrid GAN\\Synthetic Data Generation};
+                    \node (feat) [process, below=of gan] {Teacher–Student\\Feature Selection};
+                    \node (models) [process, below=of feat] {ML/DL Models\\(RF, SVM, LR, MLP, GMM, etc.)};
+                    \node (eval) [process, below=of models] {Model Evaluation\\(Accuracy, Precision, Recall, F1, PR Curve)};
+                    \node (out) [process, below=of eval] {Final Output\\(Selected Model \& Predictions)};
+                    
+                    % Arrows
+                    \draw [arrow] (input) -- (clean);
+                    \draw [arrow] (clean) -- (gan);
+                    \draw [arrow] (gan) -- (feat);
+                    \draw [arrow] (feat) -- (models);
+                    \draw [arrow] (models) -- (eval);
+                    \draw [arrow] (eval) -- (out);
+                
+                \end{tikzpicture}
+                
+                \caption{End-to-End Workflow of the Hard Drive Failure Prediction System}
+            \end{figure}
+        \caption{Model Accuracy}
+    \end{figure}
+
+    \subsection{Discussion points}
+    \begin{itemize}
+        \item Which models consistently perform well across datasets and balancing methods?
+        \item Does feature selection consistently improve generalization and interpretability?
+        \item Do AutoML results keep pace with manually tuned top performers?
+        \item What are the trade-offs between accuracy and latency for potential real-time deployment?
+        \item How robust are the results to distribution shifts and data-scarcity scenarios?
+    \end{itemize}

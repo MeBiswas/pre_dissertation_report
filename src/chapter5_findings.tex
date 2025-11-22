@@ -1,0 +1,34 @@
+% !TeX root = ../main.tex
+
+\section{Findings, Recommendations and Conclusion}
+
+    \subsection{Findings}
+    \begin{itemize}
+        \item Tree ensembles (especially Random Forests) often achieve high accuracy and robust performance on imbalanced fraud datasets.
+        \item Oversampling techniques (SMOTE/ADASYN) tend to improve recall for fraudulent transactions, but require careful parameterization to avoid overfitting or information leakage.
+        \item Deep generative oversampling shows promise for improving minority-class coverage but introduces complexity and potential stability issues; benefits appear dataset-dependent.
+        \item Feature selection typically reduces dimensionality and improves learning efficiency; the best-performing feature subsets vary by dataset and model, underscoring the value of a guided FS approach.
+        \item AutoML can reach competitive performance with reduced manual tuning and can help with reproducibility; however, interpretability and custom feature engineering remain important considerations.
+    \end{itemize}
+
+    \subsection{Recommendations}
+    \begin{itemize}
+        \item Adopt a multi-model evaluation framework combining baseline ML, strong ensembling, and a selective DL component to capture nonlinear patterns without overcomplicating deployment.
+        \item Use a balanced mix of oversampling methods (start with SMOTE/ADASYN; experiment with GAN/VAE-based oversampling in parallel) and include models trained on original data to gauge true gains.
+        \item Integrate feature selection as a standard pipeline step, testing both filter/embedded methods and wrapper-based approaches.
+        \item Consider AutoML as a complementary tool, but maintain the ability to interpret and explain top models, especially for regulatory or business stakeholders.
+        \item If privacy and cross-institution collaboration are priorities, prototype a federated-learning discussion or design to explore privacy-preserving learning in future work.
+        \item Prioritize tree ensemble methods for imbalanced fraud detection tasks due to their strong baseline performance.
+        \item Use oversampling techniques like SMOTE and ADASYN cautiously, tuning parameters to balance recall improvement against overfitting risks.
+        \item Explore deep generative oversampling for datasets with severe class imbalance, but validate stability and generalization carefully.
+        \item Implement guided feature selection to reduce dimensionality and improve model efficiency, tailoring subsets to specific datasets and models.
+        \item Leverage AutoML to accelerate model development and enhance reproducibility, while maintaining focus on interpretability and domain-specific feature engineering.
+    \end{itemize}
+
+    \subsection{Conclusion}
+    \begin{itemize}
+        \item The literature converges on a core insight: combining robust ML/DL models with careful handling of imbalance and thoughtful feature selection yields strong fraud-detection performance, with practical deployment considerations (latency, interpretability, privacy) guiding the choice of methods.
+        \item Your dissertation can contribute by providing a transparent, multi-dataset, multi-method evaluation framework, a nuanced analysis of FS and oversampling choices, and a pragmatic discussion of AutoML and privacy-preserving avenues for real-world adoption.
+        \item Effective fraud detection in imbalanced datasets benefits from a combination of robust modeling techniques, thoughtful data augmentation, and strategic feature selection.
+        \item A balanced approach that integrates traditional ML, deep learning, and AutoML can yield
+    \end{itemize}

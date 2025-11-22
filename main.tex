@@ -1,0 +1,112 @@
+\documentclass[12pt,a4paper]{article}
+
+% Load preamble components
+\input{preamble/packages}
+\input{preamble/formatting}
+\input{preamble/macros}
+
+\begin{document}
+
+% ============================================================
+% Title Page (Declaration)
+% ============================================================
+
+\input{src/frontmatter/declaration}
+
+% ============================================================
+% Certification Page 1 (Supervisor)
+% ============================================================
+
+\input{src/frontmatter/certificate_supervisor}
+
+% ============================================================
+% Certification Page 2 (HOD Certificate)
+% ============================================================
+
+\input{src/frontmatter/certificate_hod}
+
+% ============================================================
+% Table of Contents
+% ============================================================
+
+\newpage
+\tableofcontents
+\newpage
+
+% ============================================================
+% Preface
+% ============================================================
+
+\input{src/chapter0_preface}
+
+\newpage
+
+% ============================================================
+% Chapter 1: Introduction & Background
+% ============================================================
+
+\input{src/chapter1_introduction}
+
+\newpage
+
+% ============================================================
+% Chapter 2: Literature Review
+% ============================================================
+
+\input{src/chapter2_literature.tex}
+
+\newpage
+
+% ============================================================
+% Chapter 3
+% ============================================================
+
+\input{src/chapter3_research.tex}
+
+\newpage
+
+% ============================================================
+% Chapter 4
+% ============================================================
+
+\input{src/chapter4_analysis.tex}
+
+\newpage
+
+% ============================================================
+% Chapter 5
+% ============================================================
+
+\input{src/chapter5_findings.tex}
+
+\newpage
+
+% ============================================================
+% Chapter 6
+% ============================================================
+
+\input{src/chapter6_future.tex}
+
+\newpage
+
+% ============================================================
+% Glossaries
+% ============================================================
+
+\printglossary[type=\acronymtype,title=List of Abbreviations]
+\addcontentsline{toc}{section}{List of Abbreviations}
+\newpage
+
+% ============================================================
+% References
+% ============================================================
+
+\newpage
+\printbibliography
+\addcontentsline{toc}{section}{References}
+
+% ============================================================
+% Document End
+% ============================================================
+
+\end{document}

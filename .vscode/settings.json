@@ -1,5 +1,40 @@
 {
+  // 1. All LaTeX output goes to "build" at the project root
   "latex-workshop.latex.outDir": "build",
+
+  // 2. Tools
+  "latex-workshop.latex.tools": [
+    {
+      "name": "xelatex",
+      "command": "xelatex",
+      "args": [
+        "-interaction=nonstopmode",
+        "-synctex=1",
+        "-output-directory=build",
+        "%DOC%"
+      ]
+    },
+    {
+      "name": "biber",
+      "command": "biber",
+      "args": [
+        "--quiet",
+        "--output-directory=build",
+        "%DOCFILE%"
+      ]
+    },
+    {
+      "name": "makeglossaries",
+      "command": "makeglossaries",
+      "args": [
+        "-d",
+        "build",
+        "%DOCFILE%"
+      ]
+    }
+  ],
+
+  // 3. Recipe: build everything in order
   "latex-workshop.latex.recipes": [
     {
       "name": "xelatex ➜ biber ➜ makeglossaries ➜ xelatex ×2",
@@ -13,58 +48,7 @@
     }
   ],
 
-  // "latex-workshop.latex.tools": [
-  //   {
-  //     "name": "xelatex",
-  //     "command": "xelatex",
-  //     "args": [
-  //       "-interaction=nonstopmode",
-  //       "-synctex=1",
-  //       "-output-directory=build",
-  //       "%DOC%"
-  //     ]
-  //   },
-  //   {
-  //     "name": "biber",
-  //     "command": "biber",
-  //     "args": ["--output-directory=build", "%DOCFILE%"]
-  //   },
-  //   {
-  //     "name": "makeglossaries",
-  //     "command": "makeglossaries",
-  //     "args": [ "build/%DOCFILE%"]
-  //   }
-  // ],
-
-  "latex-workshop.latex.tools": [
-    {
-      "name": "xelatex",
-      "command": "xelatex",
-      "args": [
-        "-interaction=nonstopmode",
-        "-synctex=1",
-        "-output-directory=../build",
-        "%DOC%"
-      ]
-    },
-    {
-      "name": "biber",
-      "command": "biber",
-      "args": [
-        "--output-directory=../build",
-        "%DOCFILE%"
-      ]
-    },
-    {
-      "name": "makeglossaries",
-      "command": "makeglossaries",
-      "args": [
-        "../build/%DOCFILE%"
-      ]
-    }
-  ],
-
-
+  // 4. Viewer + behavior
   "latex-workshop.view.pdf.viewer": "tab",
   "latex-workshop.latex.search.root": "root",
   "latex-workshop.latex.autoBuild.run": "onSave",
