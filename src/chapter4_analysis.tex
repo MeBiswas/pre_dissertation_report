@@ -1,0 +1,40 @@
+% !TeX root = ../main.tex
+
+\section{Data Analysis and Interpretation}
+
+\lipsum[7]
+
+\begin{figure}[H]
+    \centering
+        \begin{figure}[H]
+            \centering
+            \begin{tikzpicture}[
+                node distance=1.8cm,
+                every node/.style={font=\small},
+                process/.style={rectangle, rounded corners, minimum width=4cm, minimum height=1cm, draw=black, thick, fill=gray!5, align=center},
+                arrow/.style={thick,->,>=stealth}
+            ]
+            
+                % Nodes
+                \node (input) [process] {Raw Dataset\\(Backblaze SMART Data)};
+                \node (clean) [process, below=of input] {Data Cleaning \& Preprocessing\\(Missing values, normalization)};
+                \node (gan) [process, below=of clean] {Hybrid GAN\\Synthetic Data Generation};
+                \node (feat) [process, below=of gan] {Teacher–Student\\Feature Selection};
+                \node (models) [process, below=of feat] {ML/DL Models\\(RF, SVM, LR, MLP, GMM, etc.)};
+                \node (eval) [process, below=of models] {Model Evaluation\\(Accuracy, Precision, Recall, F1, PR Curve)};
+                \node (out) [process, below=of eval] {Final Output\\(Selected Model \& Predictions)};
+                
+                % Arrows
+                \draw [arrow] (input) -- (clean);
+                \draw [arrow] (clean) -- (gan);
+                \draw [arrow] (gan) -- (feat);
+                \draw [arrow] (feat) -- (models);
+                \draw [arrow] (models) -- (eval);
+                \draw [arrow] (eval) -- (out);
+            
+            \end{tikzpicture}
+            
+            \caption{End-to-End Workflow of the Hard Drive Failure Prediction System}
+        \end{figure}
+    \caption{Model Accuracy}
+\end{figure}

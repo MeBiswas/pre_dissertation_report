@@ -1,0 +1,63 @@
+% !TeX root = ../main.tex
+
+\section{Research Methodology}
+
+\subsection{Research questions}
+    \begin{itemize}
+        \item Which ML/DL models deliver the strongest fraud-detection performance on imbalanced European credit-card datasets \cite{kaggle_dataset}, and how do they compare when augmented by different balancing and feature-selection strategies?
+        \item How does feature selection (e.g., LDA, PCA, GA-based selectors) impact model performance and interpretability?
+    \end{itemize}
+
+\subsection{Data sources}
+    European credit card dataset \cite{kaggle_dataset} (the standard 30 features V1–V28, Time, Amount; fraud label). Use the original data with preprocessing as a baseline, and also consider a SMOTE/ADASYN-augmented version for comparison.
+
+\subsection{Experimental design}
+    \begin{itemize}
+        \item \textbf{Baseline models:} Logistic Regression (\acrshort{lr}), Decision Tree (\acrshort{dt}), Random Forest (\acrshort{rf}), XGBoost (\acrshort{xgboost}), SVM (\acrshort{svm}), K-Nearest Neighbors (\acrshort{knn}), Gaussian Naive Bayes (\acrshort{gaussiannb}) as a \acrlong{ml} baseline.
+        \item \textbf{Feature handling:} Standardize features.
+        \item \textbf{Balancing strategies:}
+            \begin{itemize}
+                \item No resampling (baseline on original data)
+                \item Classic oversampling (SMOTE, ADASYN)
+                \item Deep generative oversampling (GAN)
+                \item Undersampling methods as a complement for comparison (careful handling to avoid loss of information)
+            \end{itemize}
+        \item \textbf{Model optimization:}
+            \begin{itemize}
+                \item Hyperparameter tuning for each model (regularization, tree depth, learning rate, number of trees, kernel parameters, etc.)
+                \item Cross-validation (e.g., stratified k-fold) to ensure robustness.
+            \end{itemize}
+        \item \textbf{Evaluation metrics:}
+            \begin{itemize}
+                \item \textbf{Primary:} AUC/ROC, F1-score, recall (fraud detection emphasis), precision
+                \item \textbf{Secondary:} Accuracy, PR-AUC
+                \item Computational metrics: training time, inference latency (for real-time considerations)
+            \end{itemize}
+        \item \textbf{Validation strategy:}
+            \begin{itemize}
+                \item Stratified k-fold cross-validation for robust estimates
+                \item Holdout test set for final evaluation
+                \item Statistical significance testing (e.g., paired t-tests or non-parametric tests) to compare top models
+            \end{itemize}
+        \item \textbf{Reproducibility:} Document seeds, data preprocessing steps, and exact hyperparameters; consider releasing code and configuration files.
+        \item \textbf{Data analysis plan:}
+            \begin{itemize}
+                \item Compare performance across models and balancing strategies using aggregated metrics (mean and 95\% CIs) over cross-validation folds.
+                \item Analyze feature importance and model explainability (SHAP values or feature-importance plots for tree ensembles; LIME for select models).
+                \item Investigate the impact of feature selection by comparing performance with and without FS, and by analyzing the most informative features across models.
+                \item Evaluate robustness to distribution shifts by testing models trained on European data on the second dataset without retraining, then with retraining.
+            \end{itemize}
+        \item \textbf{Deliverables:}
+            \begin{itemize}
+                \item A comprehensive experimental report detailing methodology, results, and interpretations.
+                \item Clear figures and tables showing model performance across configurations.
+                \item An Abbreviations section and a Findings/Recommendations section suitable for the dissertation narrative.
+            \end{itemize}
+        \item \textbf{Tools and environment :}
+            \begin{itemize}
+                \item Python-based ML stack (scikit-learn for baseline models; XGBoost or LightGBM for gradient-boosted trees; TensorFlow/Keras or PyTorch for DL baselines; imbalanced-learn for SMOTE/ADASYN).
+                \item \textbf{Data visualization:} matplotlib/seaborn for performance plots; SHAP for interpretability.
+                \item \textbf{Reproducibility:} Jupyter/Notebook pipelines with requirements.txt; a reproducible workflow (e.g., Makefile or a simple Python script with config files).
+                \item Version control (Git) for code management.
+            \end{itemize}
+    \end{itemize}

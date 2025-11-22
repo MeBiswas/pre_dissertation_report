@@ -2,17 +2,19 @@
 % CUSTOM MACROS & SETTINGS
 % ============================
 
-% Glossaries
+% ---- Glossaries / Acronyms ----
 \renewcommand{\acronymname}{List of Abbreviations}
-\glsdisableentry{main}
-\setglossarystyle{list}
-\makeglossaries
+
+% Load acronym definitions
 \loadglsentries{glossaries.tex}
 
-% Bibliography file
+% Enable glossaries
+\makeglossaries
+
+% ---- Bibliography ----
 \addbibresource{references.bib}
 
-% Fix biblatex: volume+number macro
+% Fix biblatex: volume+number macro (used by ieee style)
 \AtBeginDocument{%
   \providebibmacro{volume+number}{%
     \printfield{volume}%

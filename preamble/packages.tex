@@ -2,7 +2,7 @@
 % PACKAGES
 % ============================
 
-% Core functionality
+% Core + encoding
 \usepackage[utf8]{inputenc}
 \usepackage{times}
 \usepackage{ragged2e}
@@ -11,43 +11,42 @@
 \usepackage{amsmath}
 \usepackage{amssymb}
 
-% Tables & Formatting
+% Tables
 \usepackage{array}
 \usepackage{multirow}
 \usepackage{booktabs}
 
 % Graphics
 \usepackage{graphicx}
-\graphicspath{{../images/}}
+\graphicspath{{images/}} % relative to project root (same level as main.tex)
 
 % TikZ
 \usepackage{tikz}
 \usetikzlibrary{shapes.geometric, arrows, positioning}
 
-% Page layout
+% Page layout etc.
 \usepackage{geometry}
 \usepackage{setspace}
 \usepackage{titlesec}
 
-% Caption, floats
+% Captions + floats
 \usepackage{caption}
 \usepackage{float}
 
-% Headers & Footers
+% Headers & footers
 \usepackage{fancyhdr}
 \usepackage{lastpage}
 
 % Hyperlinks
 \usepackage{hyperref}
 
-% Dummy text (remove later if not needed)
+% Dummy text (for now)
 \usepackage{lipsum}
 
-% Glossaries + Acronyms
-% \usepackage[acronym]{glossaries}
+% Glossaries + acronyms (acronym only, NO main glossary)
 \usepackage[acronym,nomain]{glossaries}
 
-% Bibliography (biblatex)
+% Bibliography (biblatex + IEEE style)
 \usepackage[
     backend=biber,
     style=ieee,

@@ -2,23 +2,22 @@
 
 # LaTeX build files
 build/
-*.synctex.gz
-*.pdf
 *.aux
 *.log
 *.out
-*.bbl
-*.blg
-*.bcf
-*.run.xml
+*.synctex.gz
+*.fdb_latexmk
+*.fls
 *.toc
 *.lof
 *.lot
-*.acr
+*.bbl
+*.bcf
+*.run.xml
 *.acn
+*.acr
 *.alg
 *.glg
 *.glo
 *.gls
-*.ist
-*.xdy
+*.glsdefs
