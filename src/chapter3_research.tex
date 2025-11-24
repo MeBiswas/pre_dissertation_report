@@ -2,16 +2,16 @@
 
 \section{Research Methodology}
 
-\subsection{Research questions}
+    \subsection{Research questions}
     \begin{itemize}
         \item Which ML/DL models deliver the strongest fraud-detection performance on imbalanced European credit-card datasets \cite{kaggle_dataset}, and how do they compare when augmented by different balancing and feature-selection strategies?
         \item How does feature selection (e.g., LDA, PCA, GA-based selectors) impact model performance and interpretability?
     \end{itemize}
 
-\subsection{Data sources}
+    \subsection{Data sources}
     European credit card dataset \cite{kaggle_dataset} (the standard 30 features V1–V28, Time, Amount; fraud label). Use the original data with preprocessing as a baseline, and also consider a SMOTE/ADASYN-augmented version for comparison.
 
-\subsection{Experimental design}
+    \subsection{Experimental design}
     \begin{description}
         \item \textbf{Baseline models:} Logistic Regression (\acrshort{lr}), Decision Tree (\acrshort{dt}), Random Forest (\acrshort{rf}), XGBoost (\acrshort{xgboost}), SVM (\acrshort{svm}), K-Nearest Neighbors (\acrshort{knn}), Gaussian Naive Bayes (\acrshort{gaussiannb}) as a \acrlong{ml} baseline.
         \item \textbf{Feature handling:} Standardize features.

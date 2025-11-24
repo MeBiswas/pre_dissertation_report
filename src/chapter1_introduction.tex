@@ -2,80 +2,37 @@
 
 \section{Introduction}
 
-\begin{justify}
-    \subsection{Background and Context}
-    Credit card fraud detection has become a critical challenge at the intersection of financial security, data science, and machine learning. The rapid growth of e-commerce, contactless payments, and digital financial services has created new opportunities for fraudsters to carry out sophisticated attacks at unprecedented speeds. The scale of this problem is staggering: in 2023, the Federal Trade Commission recorded 114,348 cases of credit card fraud in the United States alone, with financial losses reaching \$16.4 billion in 2021. These figures highlight the urgent need for intelligent detection systems capable of identifying fraud in real-time.
-    
-    Detecting credit card fraud presents several unique challenges. The most significant is the extreme imbalance in transaction data—fraudulent transactions typically represent less than 0.2\% of all transactions. This means that for every fraudulent transaction, there are approximately 500 legitimate ones. Additionally, fraudsters continuously change their tactics, a problem known as concept drift, which causes fraud patterns to evolve over time. Traditional statistical methods and basic machine learning models struggle to handle these challenges effectively.
-    
-    The situation becomes even more complex when considering operational requirements. Fraud detection systems must make decisions within milliseconds to avoid disrupting the customer experience, imposing strict limits on computational complexity. A system that is accurate but too slow is ultimately impractical for real-world deployment.
-    Machine learning techniques offer promising solutions to these challenges. These approaches can learn complex patterns from data, adapt to evolving fraud tactics, and efficiently process high-dimensional information. By leveraging machine learning, we can develop detection systems that are both accurate and fast enough for practical use in modern payment infrastructures.
+    \begin{justify}
+        The rapid expansion of digital payments and e-commerce has increased the volume of credit card transactions, but it has also enabled a rise in sophisticated fraud attempts. Fraudulent transactions represent a very small fraction of total activity—often below 0.2\%—yet they account for significant financial losses worldwide. This extreme imbalance, combined with evolving fraud patterns and real-time decision constraints, makes credit card fraud detection a challenging problem.
 
-    \subsection{Research Problem Statement}
-    Credit card fraud poses a persistent and expensive threat to electronic payment systems. Researchers approach fraud detection as a binary classification problem—distinguishing between legitimate and fraudulent transactions. However, this task is complicated by severe class imbalance, where fraudulent transactions are extremely rare compared to legitimate ones.
-    
-    The research community has explored numerous machine learning and deep learning methods to tackle this problem, including logistic regression, decision trees, random forests, support vector machines (SVM), k-nearest neighbors (KNN), convolutional neural networks (CNNs), and ensemble approaches. Three recurring themes emerge across this research: handling class imbalance through techniques like oversampling, undersampling, SMOTE, ADASYN, and GAN-based synthetic data generation; selecting relevant features using methods such as PCA, LDA, and genetic algorithms; and automating model development and deployment processes.
-    
-    Despite these advances, several critical challenges remain unsolved:
-    \begin{itemize}
-        \item \textbf{Class Imbalance:} The extreme rarity of fraudulent transactions causes most models to achieve deceptively high accuracy by simply predicting that nearly all transactions are legitimate. While this strategy produces impressive accuracy scores, it fails at the actual task—catching fraud.
-        \item \textbf{Concept Drift:} Fraudsters continuously adapt their tactics, causing the patterns of fraud to change over time. Models trained on historical data gradually become less effective as these patterns evolve, requiring constant updates and monitoring.
-        \item \textbf{Model Interpretability:} Complex deep learning models often function as "black boxes," making it difficult to explain why a particular transaction was flagged as fraudulent. This lack of transparency creates serious obstacles in financial institutions, where regulatory requirements demand clear explanations for decisions that affect customers.
-        \item \textbf{Privacy and Collaboration:} Financial institutions could improve fraud detection by sharing knowledge and patterns across organizations. However, privacy regulations and competitive concerns make it extremely challenging to aggregate fraud detection insights while protecting sensitive customer data.
-        \item \textbf{Methodological Issues:} Many existing studies contain fundamental flaws that inflate reported performance. Common problems include data leakage (where information from the test set inadvertently influences model training), improper temporal validation (testing models on past data when they were trained on future data), and selective reporting of metrics that hide poor performance on fraud detection.
-    \end{itemize}
-     
-    \subsection{Research Objectives}
-    This research seeks to develop a comprehensive and rigorous framework for credit card fraud detection that addresses the challenges outlined above. The primary goal is to synthesize existing research findings, design a reproducible evaluation methodology, and create a foundation for substantial future research in this area. Specifically, this work aims to produce a comparative analysis of machine learning models, investigate how data balancing and feature selection impact performance, and explore practical deployment considerations including real-time detection capabilities, model interpretability, and privacy preservation.
-    
-    The specific objectives of this research are:
-    \begin{itemize}
-        \item \textbf{Literature Analysis and Synthesis:} Critically review and synthesize existing machine learning approaches for credit card fraud detection, identifying their strengths, limitations, and suitability for real-world applications. This analysis will establish a comprehensive understanding of the current state of research and identify gaps that require further investigation.
-        \item \textbf{Algorithm Comparison and Evaluation:} Systematically compare traditional machine learning algorithms (such as logistic regression, decision trees, and random forests), deep learning architectures (including neural networks and CNNs), and hybrid ensemble methods. The evaluation will focus on their ability to handle severely imbalanced datasets and accurately detect fraudulent patterns.
-        \item \textbf{Class Imbalance Mitigation:} Investigate and evaluate techniques for addressing class imbalance, including synthetic data generation methods like SMOTE, as well as cost-sensitive learning approaches that incorporate the actual financial costs of different types of misclassification (missing fraud versus flagging legitimate transactions).
-        % \item \textbf{Model Interpretability and Explainability:} Examine explainable AI techniques, particularly SHAP (SHapley Additive exPlanations) and LIME (Local Interpretable Model-agnostic Explanations), to enhance model transparency. This objective addresses the critical need for financial institutions to understand and justify automated fraud detection decisions to regulators and customers.
-        % \item \textbf{Advanced Architecture Assessment:} Assess the potential of advanced neural network architectures for fraud detection, including graph neural networks for identifying relational patterns between transactions, autoencoders for detecting anomalous transaction behavior, and recurrent neural networks for modeling temporal sequences and evolving fraud patterns.
-        \item \textbf{Methodological Best Practices:} Identify and document methodological best practices and rigorous evaluation protocols that prevent common research pitfalls such as data leakage, temporal validation errors, and biased performance metrics. This will ensure that performance assessments accurately reflect real-world deployment scenarios.
-    \end{itemize}
+        Traditional rule-based systems cannot keep pace with modern fraud strategies. As highlighted in recent studies, manual rules struggle to handle high-dimensional data, adapt to new attack behaviors, or maintain accuracy under heavy class imbalance . Machine learning (ML) models provide a more scalable alternative by learning complex transaction patterns and enabling real-time detection in large-scale payment environments.
 
-    \subsection{Significance of the Study}
-    % This research holds significant theoretical and practical implications for multiple stakeholders. From a theoretical perspective, it contributes to the growing body of knowledge on machine learning applications in adversarial environments where malicious actors continuously adapt their strategies. The study advances understanding of how ensemble methods, deep learning architectures, and explainable AI techniques can be effectively integrated to address the unique challenges of fraud detection. Practically, the research provides actionable insights for financial institutions seeking to enhance their fraud detection capabilities while maintaining regulatory compliance and customer trust. By identifying effective techniques for handling class imbalance, temporal patterns, and concept drift, this work directly addresses the operational challenges faced by fraud analysts and system designers. Furthermore, the emphasis on explainability and interpretability ensures that proposed solutions can be deployed in production environments where transparency and accountability are essential. Ultimately, enhanced fraud detection capabilities translate directly into reduced financial losses, improved customer protection, and increased confidence in digital payment systems.
+        Supervised ML techniques—such as Logistic Regression, Naive Bayes, Decision Tree, Random Forest, SVM, k-Nearest Neighbors, XGBoost, and LightGBM—have shown strong potential for fraud classification. Recent works also emphasize the importance of feature engineering (particularly Time and Amount), prototype selection, dimensionality reduction, data scaling (Robust or Min-Max Scaling), and imbalance-handling methods such as SMOTE, GAN-based augmentation, and careful cross-validation to avoid optimistic biases.
 
-    % Key takeaways guiding this work: Random Forests and other tree-based ensembles frequently achieve high accuracy on imbalanced fraud datasets; oversampling (SMOTE/ADASYN, and modern deep generative oversamplers) often improves recall of fraud cases; feature selection reduces dimensionality and can improve generalization; AutoML (e.g., Just Add Data) can automate model selection and hyperparameter tuning while maintaining competitive performance; privacy-preserving approaches (e.g., federated learning) are increasingly relevant for cross-institution collaborations.
-
-    This research carries important implications for both academic understanding and practical application in the financial sector, benefiting multiple stakeholders.
-
-    \subsubsection*{Theoretical Contributions}
-    From an academic perspective, this study contributes to the expanding field of \gls{ml} in adversarial environments—situations where malicious actors continuously evolve their tactics to evade detection. The research advances our understanding of how different approaches can be effectively combined to tackle fraud detection challenges. Specifically, it explores how ensemble methods, machine learning (\gls{ml}) architectures techniques can work together to address problems such as extreme class imbalance, evolving fraud patterns, and the need for transparent decision-making.
-    
-    \subsubsection*{Practical Benefits}
-    The practical value of this research extends to several key stakeholders:
-
-    \textbf{Financial Institutions:} Banks and payment processors gain actionable insights for improving their fraud detection systems while maintaining regulatory compliance and customer trust. The research identifies proven techniques for handling imbalanced data, recognizing temporal patterns, and adapting to changing fraud tactics—key operational challenges in fraud detection.
-    
-    \textbf{Fraud Analysts and System Designers:} By documenting effective methodologies and best practices, this work provides concrete guidance for professionals designing and implementing fraud detection systems. The emphasis on explainability ensures that proposed solutions can be deployed in production environments where transparency and accountability are essential, especially under regulatory requirements.
-    
-    \textbf{Consumers and Society:} Ultimately, more effective fraud detection yields broader benefits: reduced financial losses, improved consumer protection, fewer false positives that disrupt legitimate transactions, and increased confidence in modern digital payment systems.
-    
-    \subsubsection*{Key Insights Guiding This Research}
-    
-    Several important findings from existing literature inform this investigation:
-    
-    \begin{itemize}
-        \item Ensemble methods such as Random Forests (\gls{rf}) and extreme gradient boosting models (\gls{xgboost}) consistently deliver strong performance on imbalanced fraud datasets due to their ability to model complex, nonlinear decision boundaries.
+        \subsection{Research Problem Statement}
+        Credit card fraud detection is framed as a binary classification task, but its effectiveness is hindered by severe class imbalance, concept drift, limited interpretability of complex models, and stringent real-time performance requirements. Existing studies highlight that models often achieve high accuracy by predicting all transactions as legitimate, while failing to detect rare fraud cases. Furthermore, evolving fraud behavior reduces the long-term reliability of static models, and regulatory environments demand interpretable and privacy-preserving solutions.
         
-        \item Oversampling techniques such as the Synthetic Minority Oversampling Technique (\acrshort{smote}) and Generative Adversarial Networks (\acrshort{gan}) significantly improve fraud detection performance by generating synthetic minority-class samples that help models learn fraud characteristics more effectively.
+        The research community has explored numerous machine learning and deep learning methods to tackle this problem, including traditional machine learning, neural networks, and ensemble approaches. Three recurring themes emerge across this research: handling class imbalance through techniques like oversampling, undersampling, SMOTE, and GAN-based synthetic data generation; selecting relevant features; and automating model development processes.
         
-        \item Feature selection (\gls{fs}) reduces dataset dimensionality by eliminating irrelevant or redundant variables, thereby improving model performance, reducing training time, and enhancing generalization to evolving fraud patterns.
+        Despite these advances, several critical challenges remain unsolved:
+        \begin{itemize}
+            \item \textbf{Class Imbalance:} The extreme rarity of fraudulent transactions causes most models to achieve deceptively high accuracy by simply predicting that nearly all transactions are legitimate. While this strategy produces impressive accuracy scores, it fails at the actual task—catching fraud.
+            \item \textbf{Concept Drift:} Fraudsters continuously adapt their tactics, causing the patterns of fraud to change over time. Models trained on historical data gradually become less effective as these patterns evolve, requiring constant updates and monitoring.
+            \item \textbf{Model Interpretability:} Complex deep learning models often function as "black boxes," making it difficult to explain why a particular transaction was flagged as fraudulent. This lack of transparency creates serious obstacles in financial institutions, where regulatory requirements demand clear explanations for decisions that affect customers.
+            \item \textbf{Privacy and Collaboration:} Financial institutions could improve fraud detection by sharing knowledge and patterns across organizations. However, privacy regulations and competitive concerns make it extremely challenging to aggregate fraud detection insights while protecting sensitive customer data.
+        \end{itemize}
         
-        % \item Automated machine learning (AutoML) frameworks streamline model selection and hyperparameter tuning, making advanced fraud detection techniques accessible even to organizations with limited data science expertise while still achieving competitive results.
-        
-        % \item Privacy-preserving methods such as federated learning enable financial institutions to collaboratively improve fraud detection models without sharing sensitive customer data—addressing both regulatory requirements and competitive concerns.
-    \end{itemize}
-\end{justify}
+        \subsection{Research Objectives}
+        This research aims to develop a rigorous, reproducible framework for evaluating machine learning approaches to credit card fraud detection. The specific objectives are:
+        \begin{itemize}
+            \item \textbf{Literature Synthesis:} Summarize and critically evaluate ML techniques for fraud detection, identifying strengths, limitations, and open challenges.
+            \item \textbf{Model Comparison:} Systematically assess traditional ML models, ensemble methods, and deep learning architectures using standardized evaluation procedures.
+            \item \textbf{Class Imbalance Mitigation:} Compare data balancing methods (SMOTE, GAN-based synthesis, undersampling, and cost-sensitive learning) and analyze their impact on detection performance.
+            % \item \textbf{Model Interpretability and Explainability:} Examine explainable AI techniques, particularly SHAP (SHapley Additive exPlanations) and LIME (Local Interpretable Model-agnostic Explanations), to enhance model transparency. This objective addresses the critical need for financial institutions to understand and justify automated fraud detection decisions to regulators and customers.
+            % \item \textbf{Advanced Architecture Assessment:} Assess the potential of advanced neural network architectures for fraud detection, including graph neural networks for identifying relational patterns between transactions, autoencoders for detecting anomalous transaction behavior, and recurrent neural networks for modeling temporal sequences and evolving fraud patterns.
+            \item \textbf{Methodological Reliability:} Implement best practices to avoid data leakage, ensure proper temporal validation, and use meaningful metrics (recall, F1-score, AUC-PR).
+        \end{itemize}
 
-% \begin{figure}[H]
-%     \centering
-%     \includegraphics[width=4.5in]{example-image}
-%     \caption{Dummy Title}
-% \end{figure}
+        \subsection{Significance of the Study}
+        This work contributes to both research and practical fraud detection systems. Academically, it strengthens understanding of ML performance in adversarial, imbalanced, and evolving environments. Practically, it offers insights for banks, payment processors, and fraud analysts on model selection, feature processing, and imbalance-handling strategies that improve detection accuracy while maintaining operational efficiency and regulatory compliance. Key findings in prior literature—such as the effectiveness of ensemble methods, the importance of synthetic minority generation, and the role of feature selection—provide the foundation for this investigation.
+    \end{justify}
