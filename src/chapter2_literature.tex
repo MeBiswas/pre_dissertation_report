@@ -1,206 +1,133 @@
 % !TeX root = ../main.tex
 
-\section{Review of Literature}
+\begin{justify}
+Credit card fraud detection has been widely investigated, with most studies noting that fraudulent transactions typically make up less than 0.2\% of all activity, creating a highly imbalanced classification problem. The most commonly used benchmark across academic and industrial research is the European Credit Card Dataset, which contains 284,807 transactions with 492 fraud cases. Its PCA-transformed features (V1–V28) and raw Time and Amount attributes make it suitable for privacy-preserving analysis, and it appears consistently in ensemble machine learning studies , AutoML research , feature selection studies using Genetic Algorithms , deep learning comparisons , state-of-the-art models , anomaly detection reviews , hybrid ML approaches, and multiple survey papers. Although this dataset has become the standard, several papers point out that relying only on one dataset limits generalizability, because fraud patterns vary across regions, institutions, and time.
 
-    \begin{justify}
-        The primary goal of credit card fraud detection systems is to correctly classify transactions as either fraudulent or legitimate while minimizing false positives (legitimate transactions incorrectly flagged as fraud) and false negatives (fraudulent transactions that go undetected). Although this appears to be a straightforward binary classification task, several domain-specific challenges make it significantly more complex.
+Across the literature, a large collection of traditional machine learning models has been applied to this dataset, including Logistic Regression, Naive Bayes, Decision Trees, Random Forests, SVM, and k-Nearest Neighbors. Studies show that Random Forests often achieve strong accuracy and stability, especially when combined with sampling methods such as SMOTE, ADASYN, or hybrid oversampling techniques. Support Vector Machines have also shown excellent performance, sometimes achieving over 90\% across evaluation metrics even without resampling, as demonstrated when SVM outperformed Decision Trees and KNN on the original European dataset. Additional work comparing Logistic Regression, Naive Bayes, and KNN on resampled datasets indicates that results can vary with sampling ratios, and performance is often influenced by how the imbalance is handled in preprocessing.
 
-        First, credit card fraud detection involves extreme class imbalance, where fraudulent transactions typically represent only 0.06\% to 2\% of all transactions \cite{ileberi2022}. Transaction data is also inherently temporal, meaning patterns evolve over time, and fraudsters actively change their strategies to evade detection. This phenomenon, known as concept drift, requires models to continuously adapt. Furthermore, real-world fraud detection systems must operate in real-time with strict latency constraints.
-    \end{justify}
+Ensemble learning methods dominate recent research. Models like XGBoost, LightGBM, and Gradient Boosted Trees frequently outperform single classifiers. Optimized LightGBM models, especially those tuned with Bayesian optimization or AutoML pipelines, achieve strong F1-scores and AUC values, making them a popular choice in fraud detection. Blending and stacking models combining SVM, KNN, and Decision Trees have also demonstrated performance improvements by integrating complementary decision boundaries, as shown in hybrid ensemble studies where blended models achieved high accuracy and balanced precision–recall performance. Multiple surveys and comparative studies confirm that ensemble methods are consistently more effective than standalone algorithms, highlighting their ability to capture complex fraud patterns across multiple feature dimensions.
 
-    % ============================================================
-    \subsection{Benchmark Datasets in Fraud Detection Research}
-    % ============================================================
+Handling class imbalance remains a central issue across all research. Oversampling approaches such as SMOTE and ADASYN often enhance recall, but many authors caution that excessive oversampling can introduce noise or overfitting. Studies combining SMOTE with Random Forests or GA-based feature selection report accuracy values approaching 99.98\%. Some papers explore undersampling and hybrid strategies like SMOTE-ENN and SMOTE-Tomek, which help remove overlapping majority samples. More advanced methods use GAN-based minority sample generation to create realistic fraudulent patterns, although GAN training instability remains a limiting factor. A different line of research argues that training directly on the original imbalanced dataset—without oversampling—can still achieve strong results, especially with robust models such as SVM or CatBoost, as demonstrated in studies using the full European dataset without sampling. Several papers emphasize cost-sensitive learning as a practical alternative since it aligns misclassification costs with real financial impact.
 
-    \begin{justify}
-        The most widely used benchmark dataset in credit card fraud detection research is the European Credit Card Dataset \cite{kaggle_dataset}. It contains 284{,}807 transactions collected over two days in September 2013, of which only 492 (0.172\%) are fraudulent, reflecting real-world imbalance conditions.
+Feature engineering and feature selection play an important role in improving detection accuracy. Time-based features, transaction velocity, and scaled Amount values often contribute significantly to model performance. Dimensionality reduction techniques such as PCA, LDA, and embedded feature selection are commonly used across experiments. Notably, Genetic Algorithm–based feature selection has been shown to improve generalization and reduce model complexity in fraud detection settings. AutoML approaches automate feature construction and model tuning, producing competitive results across multiple algorithms with minimal manual intervention. Several studies also highlight the importance of prototype selection, noise removal, and scaling techniques such as Min-Max and Robust Scaler to stabilize model training on skewed datasets.
 
-        Due to confidentiality constraints, the original features were transformed using Principal Component Analysis (\acrshort{pca}), producing anonymized components (V1--V28). Only the \textit{Time} and \textit{Amount} features remain untransformed. The target variable \textit{Class} indicates fraud (1) or legitimate (0).
+A recurring theme in recent reviews is the presence of methodological flaws that artificially inflate reported performance. Common issues include applying SMOTE before splitting data, which causes data leakage; using random splits instead of chronological splits in time-dependent data; and reporting only accuracy or ROC-AUC scores, which are misleading in extremely imbalanced settings. Multiple survey papers and experimental studies emphasize the need for strict evaluation protocols, including temporal validation, PR-AUC reporting, and leakage-free preprocessing pipelines. Similar concerns are raised in deep learning evaluations, AutoML analyses, and comparative ensemble studies.
 
-        This dataset is widely used because it allows researchers to benchmark approaches under consistent conditions. However, over-reliance on a single dataset can limit generalizability, especially when fraud patterns differ across regions and financial systems.
-    \end{justify}
+Across all papers, several research gaps remain evident. Most studies rely heavily on a single benchmark dataset, limiting generalizability across regions and financial systems. Temporal validation is rarely performed despite fraud being inherently time-evolving. Few works address latency constraints necessary for real-time fraud detection, and interpretability remains a challenge, especially for deep or ensemble models deployed in regulated financial environments. In addition, many studies lack multi-dataset experiments and do not explore privacy-preserving training strategies such as federated learning. These gaps highlight the need for more rigorous evaluation practices, multi-dataset benchmarking, and hybrid approaches combining machine learning, ensemble methods, and advanced feature selection to build more reliable and operationally meaningful fraud detection systems.
+\end{justify}
 
-    % ------------------------------------------------------------
-    \subsubsection*{Implications for Research Design}
-    % ------------------------------------------------------------
+% Add vertical space above the table
+\vspace{1cm}
+\begin{table}[htbp]
+    \centering
+    \renewcommand{\arraystretch}{1.3}
+    \begin{tabularx}{\textwidth}{|p{3.2cm}|p{3cm}|p{2.1cm}|X|p{3cm}|}
+        \hline
+        \textbf{Author(s) \& Year} & \textbf{Models / Approach} & \textbf{Dataset} & \textbf{Techniques Applied} & \textbf{Key Findings} \\ \hline
 
-    \begin{justify}
-        A robust research methodology should include multiple datasets when possible. This approach helps to:
+        Chu et al. (2023) \cite{chu2023} &
+        SVM, KNN, DT, Blending, AdaBoost &
+        European Dataset &
+        Original dataset without sampling; ensemble blending &
+        SVM exceeded 90\% metrics; blending improved stability; warns against oversampling. \\ \hline
 
-        \begin{itemize}
-            \item Test whether detection techniques generalize beyond one dataset,
-            \item Evaluate sensitivity to distribution shifts,
-            \item Identify techniques effective across varying class imbalance levels,
-            \item Reduce overfitting to a single benchmark dataset.
-        \end{itemize}
+        Plakandaras et al. (2022) \cite{plakandaras2022} &
+        AutoML (JAD) &
+        European Dataset &
+        AutoML pipelines, automated feature engineering &
+        AutoML competitive with tuned models; improves reproducibility. \\ \hline
 
-    \end{justify}
+        Ileberi et al. (2022) \cite{ileberi2022} &
+        GA + RF / GA + ANN &
+        European Dataset &
+        SMOTE; Genetic Algorithm feature selection &
+        Achieved $\approx$99.98\% accuracy; GA improves model generalization. \\ \hline
 
-    % ============================================================
-    \subsection{Evaluation Metrics for Imbalanced Data}
-    % ============================================================
+        Alarfaj et al. (2022) \cite{alarfaj2022} &
+        RF, XGBoost, ANN, LSTM &
+        European Dataset &
+        Machine Learning + Deep Learning &
+        DL slightly outperforms ML; PR-AUC shows imbalance challenges. \\ \hline
 
-    \begin{justify}
-        Traditional accuracy is misleading for imbalanced datasets. For example, predicting all transactions as legitimate yields 99.828\% accuracy on the European dataset but detects zero fraud.
+        % Taha \& Malebary (2020) \cite{taha2020} &
+        % LightGBM (Optimized) &
+        % Bank Dataset &
+        % Bayesian hyperparameter tuning &
+        % LightGBM achieves high precision/recall when tuned. \\ \hline
 
-        \textbf{Precision} measures the proportion of correctly identified fraudulent transactions among all predicted frauds, helping reduce false positives.
+        Sulaiman et al. (2022) \cite{sulaiman2022} &
+        Survey of ML techniques &
+        Multiple Datasets &
+        Overview of ML, privacy, imbalance &
+        Highlights gaps in interpretability, privacy, evaluation. \\ \hline
 
-        \textbf{Recall}, or true positive rate, measures how many actual frauds were detected, reducing false negatives.
+        Sayande et al. (2024) \cite{sayande2024} &
+        ML, DL, Ensemble Methods &
+        Multiple Datasets &
+        Review of ML algorithms &
+        RF, XGBoost, CNNs strongest; real-time constraints noted. \\ \hline
 
-        The \textbf{F1-score}, the harmonic mean of precision and recall, provides a balanced metric. The \textbf{F-beta} score generalizes this balance by weighing recall more heavily when missing fraud is costlier.
+        % Makki et al. (2019) \cite{makki2019} &
+        % LR, DT, RF, SVM &
+        % European Dataset &
+        % SMOTE, RUS, ADASYN &
+        % RF best performer; oversampling boosts recall but risks overfitting. \\ \hline
 
-        \textbf{Confusion matrices} offer a complete picture of prediction outcomes across all classes.
-    \end{justify}
+        % Afriyie et al. (2023) \cite{afriyie2023} &
+        % LR, DT, RF &
+        % Western US Dataset &
+        % Undersampling &
+        % RF $\sim$96\% accuracy; undersampling improves balance but may lose information. \\ \hline
 
-    % ------------------------------------------------------------
-    \subsubsection*{ROC-AUC and PR-AUC}
-    % ------------------------------------------------------------
+        % Alfaiz \& Fati (2022) \cite{alfaiz2022} &
+        % CatBoost &
+        % European Dataset &
+        % PCA + AllKNN sampling &
+        % CatBoost achieved 99.96\%; warns against aggressive filtering. \\ \hline
 
-    \begin{justify}
-        The Receiver Operating Characteristic (ROC) curve plots true positive rate against false positive rate, with ROC-AUC often exceeding 0.97 for advanced fraud models \cite{ileberi2022}. However, ROC curves can be overly optimistic under extreme imbalance.
+        % Salekshahrezaee et al. (2023) \cite{salekshah2023} &
+        % Various ML models &
+        % European Dataset &
+        % Feature extraction, sampling &
+        % Sampling choices significantly affect results; risk of bias. \\ \hline
 
-        Precision--Recall (PR) curves directly reflect minority-class performance. Studies repeatedly show large gaps between ROC-AUC (e.g., 0.92) and PR-AUC (e.g., 0.69), revealing that PR-AUC is a more informative metric for fraud detection.
-    \end{justify}
+        % Rtayli \& Enneya (2020) \cite{rtayli2020} &
+        % SVM &
+        % Risk Dataset &
+        % Feature selection &
+        % FS improves SVM performance; PCA effective. \\ \hline
 
-    % ============================================================
-    \subsection{Traditional Machine Learning Approaches}
-    % ============================================================
+        % Sarma et al. (2020) \cite{sarma2020} &
+        % XGBoost &
+        % Simulated Dataset &
+        % Gradient boosting &
+        % XGBoost outperforms LR; robust for imbalance. \\ \hline
 
-    \begin{justify}
-        Traditional \gls{ml} approaches such as Logistic Regression (\acrshort{lr}), Decision Trees, Random Forests (\acrshort{rf}), Support Vector Machines (\acrshort{svm}), and Naive Bayes (\acrshort{nb}) remain widely used.
+        % Patel et al. (2020) \cite{patel2020} &
+        % CNN, MLP &
+        % Proprietary Dataset &
+        % Deep Learning architectures &
+        % DL detects subtle patterns; needs careful imbalance handling. \\ \hline
 
-        \textbf{Logistic Regression} performs well with appropriate feature engineering and cost-sensitive training.
+        % Suresh et al. (2020) \cite{suresh2020} &
+        % DNN (Deep Learning) &
+        % Industry Dataset &
+        % Neural network architectures &
+        % DNN effective but lacks interpretability. \\ \hline
 
-        \textbf{Random Forest} consistently delivers strong performance. Studies such as \cite{ileberi2022} report accuracy near 99.95\%, F1 scores around 0.83, and ROC-AUC values near 0.98. Decision Trees offer interpretability, useful in regulated environments.
+        % Hassan et al. (2021) \cite{hassan2021} &
+        % Hybrid ML + DL &
+        % Multiple Datasets &
+        % Hybrid ensembles &
+        % Hybrid approaches outperform single models; high computation cost. \\ \hline
 
-        \textbf{Support Vector Machines} handle high-dimensional spaces but do not scale well to large datasets.
+        % Rajasekaran et al. (2020) \cite{rajasekaran2020} &
+        % Hybrid ML &
+        % Fraud Dataset &
+        % Model combination &
+        % Hybrid ML performs better than classical models. \\ \hline
 
-        \textbf{k-Nearest Neighbors (\acrshort{knn})} is simple but computationally expensive during prediction and sensitive to irrelevant features.
-    \end{justify}
-
-    % ------------------------------------------------------------
-    \subsubsection*{Ensemble Methods}
-    % ------------------------------------------------------------
-
-    \begin{justify}
-        \textbf{XGBoost} (\acrshort{xgboost}) has emerged as one of the most effective ensemble classifiers, achieving F1 scores up to 0.947 and AUC values near 0.994 \cite{ileberi2022}. Gradient Boosting Machine (\acrshort{gbm}) and AdaBoost also perform strongly but may be more prone to overfitting without careful tuning.
-    \end{justify}
-
-    % ============================================================
-    % \subsection{Deep Learning Approaches}
-    % ============================================================
-
-    % \begin{justify}
-    % Deep learning (\acrshort{dl}) models—such as Convolutional Neural Networks (CNNs), Long Short-Term Memory (LSTM) networks, Multilayer Perceptrons (\acrshort{mlp}), and autoencoders—can uncover complex nonlinear fraud patterns.
-
-    % These models automatically learn hierarchical representations but introduce challenges such as higher training cost and reduced interpretability. In regulated financial sectors, explainability becomes a major constraint, making black-box models difficult to deploy in practice.
-
-    % A tiered evaluation strategy is recommended: begin with classical \acrshort{ml} models such as \acrshort{rf}, then explore deep learning only if the dataset size and complexity justify the additional computational overhead.
-    % \end{justify}
-
-    % ============================================================
-    \subsection{Handling Class Imbalance}
-    % ============================================================
-
-    \begin{justify}
-        Fraud detection suffers from extreme class imbalance. Models trained on raw data often predict the majority class (legitimate transactions), achieving high accuracy but very low fraud detection capability.
-    \end{justify}
-
-    % ------------------------------------------------------------
-    \subsubsection*{Resampling Techniques}
-    % ------------------------------------------------------------
-
-    \begin{justify}
-        \textbf{Undersampling} removes majority-class instances. Methods such as NearMiss select majority samples close to minority samples, preserving boundaries.
-
-        \textbf{Oversampling} methods include random oversampling and the Synthetic Minority Oversampling Technique (\acrshort{smote}). SMOTE interpolates between minority samples to generate synthetic fraud examples, improving fraud recall significantly \cite{ileberi2022}.
-
-        \textbf{ADASYN} builds on SMOTE by focusing on harder-to-learn samples near decision boundaries. Studies show that Random Forest combined with ADASYN can achieve accuracy up to 99.95\%.
-
-        \textbf{Hybrid methods}, such as SMOTE+ENN and SMOTE+Tomek Links, combine oversampling and data cleaning to reduce class overlap.
-    \end{justify}
-
-    % ------------------------------------------------------------
-    \subsubsection*{Alternative Approaches}
-    % ------------------------------------------------------------
-
-    \begin{justify}
-        \textbf{Cost-sensitive learning} assigns higher penalties to false negatives, aligning model behaviour with real financial risk.
-
-        \textbf{Generative oversampling} using Generative Adversarial Networks (\acrshort{gan}) can generate more realistic minority samples, though training instability limits widespread adoption.
-    \end{justify}
-
-    % ============================================================
-    \subsection{Feature Engineering and Selection}
-    % ============================================================
-
-    \begin{justify}
-        Feature engineering remains critical even today. Behavioural features, temporal patterns, and contextual indicators significantly improve detection.
-
-        \textbf{Feature selection (\acrshort{fs})} methods such as Principal Component Analysis, Linear Discriminant Analysis (\acrshort{lda}), genetic algorithms, and embedded techniques help remove noise and reduce dimensionality. Studies such as \cite{ileberi2022} demonstrate improved performance when FS is included.
-    \end{justify}
-
-    % ============================================================
-    \subsection{Methodological Challenges and Best Practices}
-    % ============================================================
-
-    \begin{justify}
-        Many research studies in fraud detection suffer from methodological flaws, leading to inflated and unreliable results.
-    \end{justify}
-
-    % ------------------------------------------------------------
-    \subsubsection*{Data Leakage}
-    % ------------------------------------------------------------
-
-    \begin{justify}
-        Applying SMOTE or other transformations before train–test splitting allows synthetic test information to leak into training data. This leads to unrealistically high recall, sometimes reported as 99\%+. Proper evaluation splits data first, then applies preprocessing only to training data.
-    \end{justify}
-
-    % ------------------------------------------------------------
-    \subsubsection*{Temporal Validation}
-    % ------------------------------------------------------------
-
-    \begin{justify}
-        Transaction data is temporal. Random splitting violates chronological ordering, causing unrealistic performance. Chronological splits ensure models predict future data from past data, reflecting real deployment scenarios.
-    \end{justify}
-
-    % ------------------------------------------------------------
-    \subsubsection*{Metric Manipulation}
-    % ------------------------------------------------------------
-
-    \begin{justify}
-        Some studies artificially boost recall by lowering classification thresholds drastically, resulting in very low precision. Comprehensive reporting of precision–recall trade-offs is mandatory for fair model comparison.
-    \end{justify}
-
-    % ------------------------------------------------------------
-    \subsubsection*{Best Practices}
-    % ------------------------------------------------------------
-
-    \begin{justify}
-        Best practices include:
-        \begin{itemize}
-            \item Strict chronological train–test splits,
-            \item Preprocessing pipelines without data leakage,
-            \item Comprehensive reporting of precision, recall, F1, ROC-AUC, and PR-AUC,
-            \item Forward-chaining temporal cross-validation,
-            \item Cost-based evaluation reflecting financial loss impact.
-        \end{itemize}
-    \end{justify}
-
-    % ============================================================
-    \subsection{Summary and Research Gaps}
-    % ============================================================
-
-    \begin{justify}
-        Substantial progress has been made in fraud detection, yet major challenges remain. Ensemble models such as \gls{rf} and \gls{xgboost} remain strong baselines. \gls{dl} models show potential but need careful validation and interpretability considerations.
-
-        Research gaps include:
-        \begin{itemize}
-            \item Limited multi-dataset validation,
-            \item Lack of rigorous temporal evaluation,
-            \item Insufficient attention to latency and explainability constraints,
-            \item Over-reliance on the European dataset \cite{kaggle_dataset}.
-        \end{itemize}
-
-        Future research must emphasize methodological rigor, transparent metric reporting, and validation across diverse datasets.
-    \end{justify}
+    \end{tabularx}
+    \caption{Summary of Key Studies in Credit Card Fraud Detection}
+    \label{tab:literature_summary}
+\end{table}
