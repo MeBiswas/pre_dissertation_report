@@ -1,32 +1,230 @@
 % !TeX root = ../main.tex
 
-\section*{Findings}
+This chapter presents the performance analysis of all machine learning models evaluated in this study. 
+Each model was tested under appropriate preprocessing conditions, and their behaviour was examined 
+in terms of classification performance, generalization ability, and robustness to class imbalance. 
+The chapter concludes with a cross-model comparison, practical recommendations, and final insights.
+
+% ============================================================
+% Logistic Regression
+% ============================================================
+\section*{Findings from Logistic Regression}
+
+Logistic Regression (LR) was evaluated using three variants: scaled data, SMOTE-balanced data, and 
+GAN-balanced data. This allowed investigation of how the linear model behaves under different 
+minority-sample distributions.
+
+\subsection*{Scaled Data}
+The scaled-data LR model achieved strong and balanced performance (ROC--AUC = 0.9722, 
+precision = 0.7381, recall = 0.6596, F1 = 0.6966). 
+Cross-validation metrics were consistent across folds, indicating stable generalization.  
+No major signs of overfitting were detected.
+
+\paragraph{Interpretation}
+The model benefited from the well-distributed PCA components and the transformed Time and Amount 
+features. Its linear decision boundary was sufficient to capture fraud behaviour when trained 
+on real data without synthetic oversampling.
+
+\begin{figure}[H] \centering \includegraphics[width=0.8\textwidth]{lr_scaled.png} \caption{Confusion matrix for Logistic Regression on scaled data.} \end{figure}
+
+\subsection*{SMOTE-Balanced Data}
+Although ROC--AUC improved slightly (0.9834), precision collapsed to 0.0114 despite recall reaching 
+0.9362, leading to an unusable F1-score (0.0225). 
+Cross-validation on balanced data appeared excellent but did not translate to real validation data.
+
+\paragraph{Interpretation}
+SMOTE introduced synthetic clusters that LR overfit to.  
+The resulting decision boundary failed to generalize to real-world imbalance.
+
+\begin{figure}[H] \centering \includegraphics[width=0.8\textwidth]{lr_smote.png} \caption{Confusion matrix for Logistic Regression on SMOTE-balanced data.} \end{figure}
+
+\subsection*{GAN-Balanced Data}
+GAN-balanced LR experienced the largest performance degradation (ROC--AUC = 0.8139, 
+precision = 0.0052, F1 = 0.0104).  
+Despite perfect performance on GAN-balanced folds, real validation performance collapsed.
+
+\paragraph{Interpretation}
+GAN samples distorted the fraud distribution too heavily, causing LR to learn misleading decision 
+boundaries.
+
+\begin{figure}[H] \centering \includegraphics[width=0.8\textwidth]{lr_gan.png} \caption{Confusion matrix for Logistic Regression on GAN-balanced data.} \end{figure}
+
+\subsection*{Summary}
 \begin{itemize}
-    \item Tree ensembles (especially Random Forests) often achieve high accuracy and robust performance on imbalanced fraud datasets.
-    \item Oversampling techniques (SMOTE/ADASYN) tend to improve recall for fraudulent transactions, but require careful parameterization to avoid overfitting or information leakage.
-    \item Deep generative oversampling shows promise for improving minority-class coverage but introduces complexity and potential stability issues; benefits appear dataset-dependent.
-    \item Feature selection typically reduces dimensionality and improves learning efficiency; the best-performing feature subsets vary by dataset and model, underscoring the value of a guided FS approach.
-    \item AutoML can reach competitive performance with reduced manual tuning and can help with reproducibility; however, interpretability and custom feature engineering remain important considerations.
+    \item Scaled-data LR performed best and was the only variant with practical utility.
+    \item SMOTE and GAN severely harmed generalization.
+    \item LR is unsuitable for datasets where synthetic oversampling significantly alters density.
 \end{itemize}
 
+% ============================================================
+% Naive Bayes
+% ============================================================
+\section*{Findings from Na\"ive Bayes}
+
+Naive Bayes (NB) was also evaluated under scaled, SMOTE-balanced, and GAN-balanced conditions.
+
+\subsection*{Scaled Data}
+NB produced extremely high recall (0.9149) but very low precision (0.0328), causing many false positives.  
+Cross-validation results reflected similar recall-heavy behaviour.
+
+\paragraph{Interpretation}
+Due to feature dependency violations and overlapping PCA distributions, NB overestimated the minority 
+likelihood, resulting in excessive fraud predictions.
+
+\subsection*{SMOTE-Balanced Data}
+SMOTE increased recall but precision remained extremely low (0.0409).  
+Cross-validation scores appeared excellent but failed to generalize.
+
+\paragraph{Interpretation}
+NB overfit the synthetic SMOTE samples, which cluster tightly and distort the real distribution.
+
+\subsection*{GAN-Balanced Data}
+Performance collapsed entirely (ROC--AUC = 0.0486), with zero recall and precision on real data.
+
+\paragraph{Interpretation}
+GAN-produced samples were highly incompatible with NB’s distributional assumptions.
+
+\subsection*{Summary}
+NB was unreliable across all conditions due to oversensitivity to overlapping distributions and synthetic 
+samples.
+
+% ============================================================
+% Decision Tree
+% ============================================================
+\section*{Findings from Decision Tree Classifier}
+
+Decision Trees were trained on both scaled data and SMOTE-balanced data.  
+A GAN model was intentionally avoided due to extreme overfitting early in development.
+
+\subsection*{Scaled Data}
+The scaled DT achieved ROC--AUC = 0.8187 with moderate recall (0.6383) and precision (0.4839).  
+Training ROC--AUC was 1.00, indicating severe overfitting.
+
+\paragraph{Interpretation}
+The model memorized training structures due to deep tree growth (depth = 16), making the model 
+unstable under distribution shift.
+
+\subsection*{SMOTE-Balanced Data}
+Recall improved (0.7447), but precision dropped sharply (0.2244).  
+Cross-validation again showed misleadingly perfect scores.
+
+\paragraph{Interpretation}
+SMOTE amplified minority noise, worsening generalization of tree splits.
+
+\subsection*{Summary}
+\begin{itemize}
+    \item Decision Trees are highly prone to overfitting in fraud detection tasks.
+    \item Synthetic oversampling magnifies instability.
+    \item DTs perform best as base learners within ensemble methods.
+\end{itemize}
+
+% ============================================================
+% Random Forest Findings
+% ============================================================
+\section*{Findings from Random Forest}
+
+Random Forest (RF) outperformed all linear and probabilistic models.  
+Validation F1 was 0.87, with excellent precision (0.97) and competitive recall (0.79).  
+Cross-validation showed slightly lower but stable metrics.
+
+\paragraph{Interpretation}
+RF demonstrated strong discriminative capability but still showed mild overfitting as recall dropped 
+by 18\% from cross-validation to real validation data.
+
+% ============================================================
+% XGBoost Findings
+% ============================================================
+\section*{Findings from XGBoost Classifier}
+
+XGBoost performed similarly to Random Forest, achieving F1 = 0.85 and ROC--AUC = 0.98.  
+Precision (0.906) and recall (0.81) remained strong.  
+Moderate overfitting was observed but less severe than DT or NB.
+
+\paragraph{Interpretation}
+XGBoost benefited from gradient boosting’s ability to model nonlinear fraud patterns, making it 
+one of the most reliable models in this study.
+
+% ============================================================
+% LightGBM Findings
+% ============================================================
+\section*{Findings from LightGBM}
+
+LightGBM achieved high precision (0.9667), strong F1 (0.7532), and competitive recall (0.6170).  
+It remained stable across folds with minimal signs of overfitting.
+
+\paragraph{Interpretation}
+LGBM was highly consistent and produced the fewest false positives, making it excellent for 
+production environments.
+
+% ============================================================
+% Cross-Model Comparison
+% ============================================================
+\section*{Cross-Model Comparison}
+
+\begin{table}[H]
+\centering
+\caption{Comparison of All Models on Validation Data}
+\begin{tabular}{|p{3.2cm}|c|c|c|c|p{3cm}|}
+\hline
+\textbf{Model} & \textbf{Precision} & \textbf{Recall} & \textbf{F1-Score} & \textbf{ROC-AUC} & \textbf{Remarks} \\ \hline
+
+Logistic Regression (Scaled) & 0.7381 & 0.6596 & 0.6966 & 0.9722 & Best linear model \\ 
+Naive Bayes (Scaled) & 0.0328 & 0.9149 & 0.0624 & 0.9549 & High FP rate \\ 
+Decision Tree (Scaled) & 0.4839 & 0.6383 & 0.5505 & 0.8187 & Severe overfitting \\ 
+Random Forest & 0.97 & 0.79 & 0.87 & 0.98 & Strong, mild overfitting \\ 
+XGBoost & 0.906 & 0.81 & 0.85 & 0.98 & Strong, reliable \\ 
+LightGBM & 0.9667 & 0.6170 & 0.7532 & 0.9763 & Highest precision \\ \hline
+
+\end{tabular}
+\end{table}
+
+
+\paragraph{Overall Ranking (Based on F1, AUC, and Stability)}
+\begin{enumerate}
+    \item \textbf{XGBoost} – Best balance of precision, recall, F1, and generalization.
+    \item \textbf{Random Forest} – Excellent performance but mildly overfits.
+    \item \textbf{LightGBM} – Highest precision, stable, great for production.
+    \item Logistic Regression (Scaled) – Reliable baseline, interpretable.
+    \item Decision Tree – Unstable and high variance.
+    \item Naive Bayes – Poor precision and highly unreliable.
+\end{enumerate}
+
+% ============================================================
+% Recommendations
+% ============================================================
 \section*{Recommendations}
+
+Based on all experiments, the following recommendations are made:
+
 \begin{itemize}
-    \item Adopt a multi-model evaluation framework combining baseline ML, strong ensembling, and a selective DL component to capture nonlinear patterns without overcomplicating deployment.
-    \item Use a balanced mix of oversampling methods (start with SMOTE/ADASYN; experiment with GAN/VAE-based oversampling in parallel) and include models trained on original data to gauge true gains.
-    \item Integrate feature selection as a standard pipeline step, testing both filter/embedded methods and wrapper-based approaches.
-    \item Consider AutoML as a complementary tool, but maintain the ability to interpret and explain top models, especially for regulatory or business stakeholders.
-    \item If privacy and cross-institution collaboration are priorities, prototype a federated-learning discussion or design to explore privacy-preserving learning in future work.
-    \item Prioritize tree ensemble methods for imbalanced fraud detection tasks due to their strong baseline performance.
-    \item Use oversampling techniques like SMOTE and ADASYN cautiously, tuning parameters to balance recall improvement against overfitting risks.
-    \item Explore deep generative oversampling for datasets with severe class imbalance, but validate stability and generalization carefully.
-    \item Implement guided feature selection to reduce dimensionality and improve model efficiency, tailoring subsets to specific datasets and models.
-    \item Leverage AutoML to accelerate model development and enhance reproducibility, while maintaining focus on interpretability and domain-specific feature engineering.
+    \item \textbf{Use XGBoost or LightGBM for real-world deployment}, owing to their 
+    excellent performance, stability, and interpretability options (e.g., SHAP).
+    \item \textbf{Avoid synthetic oversampling with linear and tree-based models}, as SMOTE and GAN 
+    degraded generalization and distorted fraud patterns.
+    \item \textbf{Use Logistic Regression only as a baseline}, not as a production model.
+    \item \textbf{Avoid Naive Bayes entirely} for fraud detection due to extreme precision collapse.
+    \item \textbf{Incorporate temporal validation pipelines} as fraud patterns drift over time.
+    \item \textbf{Integrate cost-sensitive learning} to balance recall and false-positive costs.
+    \item \textbf{Deploy ensemble or hybrid architectures} to combine strengths of RF/XGB/LGBM.
 \end{itemize}
 
+% ============================================================
+% Conclusion
+% ============================================================
 \section*{Conclusion}
+
+This study evaluated a comprehensive suite of machine learning algorithms for credit card fraud 
+detection using a highly imbalanced real-world dataset. The findings demonstrate that:
+
 \begin{itemize}
-    \item The literature converges on a core insight: combining robust ML/DL models with careful handling of imbalance and thoughtful feature selection yields strong fraud-detection performance, with practical deployment considerations (latency, interpretability, privacy) guiding the choice of methods.
-    \item Your dissertation can contribute by providing a transparent, multi-dataset, multi-method evaluation framework, a nuanced analysis of FS and oversampling choices, and a pragmatic discussion of AutoML and privacy-preserving avenues for real-world adoption.
-    \item Effective fraud detection in imbalanced datasets benefits from a combination of robust modeling techniques, thoughtful data augmentation, and strategic feature selection.
-    \item A balanced approach that integrates traditional ML, deep learning, and AutoML can yield
+    \item Linear and probabilistic models struggle with synthetic samples and overlapping distributions.
+    \item Tree ensembles such as Random Forest, XGBoost, and LightGBM outperform other approaches.
+    \item XGBoost delivered the best overall performance, while LightGBM achieved the highest precision.
+    \item Synthetic oversampling (SMOTE, GAN) should be applied with caution, as it frequently induces 
+    overfitting and distribution mismatch.
 \end{itemize}
+
+Overall, the results emphasise the importance of robust preprocessing, careful balancing strategies, 
+and advanced ensemble models for effective fraud detection. 
+Future work should explore temporal drift adaptation, federated fraud learning, and generative 
+augmentation tuned to real fraud manifolds.

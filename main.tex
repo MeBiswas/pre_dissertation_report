@@ -1,4 +1,3 @@
-% \documentclass[12pt,a4paper]{article}
 \documentclass[12pt,a4paper]{report}
 
 % Load preamble components
@@ -9,7 +8,14 @@
 \begin{document}
 
 % ============================================================
-% Title Page (Declaration)
+% Title Page
+% ============================================================
+
+\input{src/frontmatter/title_page.tex}
+\titleGP
+
+% ============================================================
+% Declaration Page
 % ============================================================
 
 \input{src/frontmatter/declaration}
@@ -39,8 +45,33 @@
 % ============================================================
 
 \chapter*{Preface}
+\addcontentsline{toc}{chapter}{Preface}
 \input{src/chapter0_preface}
 
+\newpage
+
+% ============================================================
+% List of Figures
+% ============================================================
+
+\listoffigures
+\addcontentsline{toc}{chapter}{List of Figures}
+\newpage
+
+% ============================================================
+% List of Tables
+% ============================================================
+
+\listoftables
+\addcontentsline{toc}{chapter}{List of Tables}
+\newpage
+
+% ============================================================
+% Glossaries
+% ============================================================
+
+\printglossary[type=\acronymtype,title=List of Abbreviations]
+\addcontentsline{toc}{chapter}{List of Abbreviations}
 \newpage
 
 % ============================================================
@@ -98,20 +129,12 @@
 \newpage
 
 % ============================================================
-% Glossaries
-% ============================================================
-
-\printglossary[type=\acronymtype,title=List of Abbreviations]
-\addcontentsline{toc}{section}{List of Abbreviations}
-\newpage
-
-% ============================================================
 % References
 % ============================================================
 
 \newpage
 \printbibliography
-\addcontentsline{toc}{section}{References}
+\addcontentsline{toc}{chapter}{References}
 
 % ============================================================
 % Document End

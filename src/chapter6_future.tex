@@ -1,13 +1,119 @@
 % !TeX root = ../main.tex
 
-The field of study presented in this chapter holds significant potential for future research and development. Several avenues can be explored to enhance the current understanding and application of the concepts discussed. One promising direction is the integration of emerging technologies, such as artificial intelligence and machine learning, to improve data analysis and predictive modeling. Additionally, further investigation into the scalability of the proposed methods could lead to broader applicability across various industries. Another area worth exploring is the development of more robust algorithms that can handle larger datasets and more complex scenarios. Collaborative efforts between academia and industry could also foster innovation and lead to practical implementations of the theoretical frameworks presented. Overall, the future scope of this field is vast, and continued research will undoubtedly yield valuable insights and advancements.
-Moreover, interdisciplinary approaches that combine insights from related fields could provide a more holistic understanding of the challenges and opportunities in this area. For instance, incorporating perspectives from sociology, economics, and environmental science could lead to more comprehensive solutions that address not only technical aspects but also societal impacts. Finally, there is a need for ongoing evaluation and refinement of existing models to ensure they remain relevant in the face of rapidly changing technological landscapes. By pursuing these future directions, researchers can contribute to the evolution of the field and its practical applications.
-In conclusion, the future scope of this chapter's subject matter is rich with possibilities. By embracing
-\begin{itemize}
-    \item Extensions to real-time and streaming fraud detection with low latency, including edge inference and online learning.
-    \item Deeper exploration of deep generative oversampling in varied domains and under different imbalance regimes, with robust evaluation of diversity and realism of synthetic samples.
-    \item AutoML-driven experiment replication across more diverse datasets and more complex feature spaces, with careful emphasis on explainability outputs.
-    \item Privacy-preserving and federated learning approaches to enable cross-institution fraud detection without sharing raw data; benchmark privacy-utility trade-offs.
-    \item Explainable AI (XAI) enhancements to improve stakeholder trust and regulatory compliance, including visual explanations of decisions and feature contributions.
-    \item Cross-domain generalization studies to assess how well fraud-detection models trained on one country's data transfer to another country’s data and what adaptations are necessary.
-\end{itemize}
+While this study provides a detailed evaluation of multiple machine learning models for credit card 
+fraud detection, several opportunities remain for enhancing model robustness, scalability, and 
+real-world applicability. This chapter highlights the key directions for future research based on the 
+observations, limitations, and insights drawn from the experiments.
+
+\section*{Enhancing Data Quality and Diversity}
+
+A major limitation in fraud detection research is the reliance on a small number of publicly available 
+datasets, such as the European Credit Card Fraud dataset. Although this dataset reflects real-world 
+class imbalance, it is temporally narrow and anonymized through PCA transformations. Future work can 
+expand this research by:
+
+    \begin{itemize}
+        \item Incorporating additional datasets from different banks, regions, and time periods to 
+        capture diverse fraud patterns.
+        \item Exploring federated or privacy-preserving data-sharing frameworks to support collaborative 
+        fraud detection across institutions without compromising sensitive customer information.
+        \item Collecting richer merchant-level, device-level, and customer-behavioural attributes to 
+        improve contextual understanding of fraud.
+    \end{itemize}
+
+\section*{Advanced Data Balancing and Augmentation}
+
+This study highlighted the challenges posed by synthetic oversampling techniques such as SMOTE and GAN. 
+While these methods increased minority sample volume, they often caused distribution drift and severe 
+overfitting. Future work may focus on:
+
+    \begin{itemize}
+        \item Developing \textbf{generative models constrained by real fraud manifolds}, ensuring 
+        synthetic samples remain close to the authentic minority distribution.
+        \item Exploring \textbf{diffusion models}, \textbf{variational autoencoders (VAEs)}, or 
+        \textbf{conditional GANs} tailored for tabular anomaly data.
+        \item Adopting \textbf{hybrid resampling techniques} that combine undersampling, clustering, and 
+        density estimation to minimize synthetic noise.
+    \end{itemize}
+
+\section*{Temporal and Streaming Fraud Detection}
+
+Fraud patterns evolve rapidly due to adversarial adaptation, seasonal behaviour, and emerging attack 
+vectors. The static models trained in this study assume that the data distribution remains stable over 
+time. Future work should investigate:
+
+    \begin{itemize}
+        \item \textbf{Online learning and streaming algorithms} capable of updating fraud patterns 
+        continuously as new transactions arrive.
+        \item \textbf{Temporal cross-validation and sliding-window training} to better capture concept drift.
+        \item \textbf{Drift-detection mechanisms} that automatically trigger model retraining or 
+        recalibration when performance declines.
+    \end{itemize}
+
+\section*{Cost-Sensitive and Risk-Aware Modelling}
+
+The financial impact of false positives and false negatives is not symmetric. Missing a fraud event is 
+far more costly than flagging a legitimate transaction. This study used conventional classification 
+metrics, but real-world fraud detection requires:
+
+    \begin{itemize}
+        \item \textbf{Cost-sensitive learning frameworks} that incorporate transaction value, customer risk, 
+        and business impact.
+        \item \textbf{Custom loss functions} that weigh minority misclassification more heavily.
+        \item \textbf{Threshold-optimization strategies}, such as maximizing expected financial savings rather 
+        than F1-score.
+    \end{itemize}
+
+\section*{Explainability and Regulatory Compliance}
+
+Financial institutions require transparent and explainable models to comply with auditing standards and 
+customer transparency regulations. Although ensemble models such as XGBoost and LightGBM were among the 
+best performers in this study, their complexity poses challenges.
+
+Future research may focus on:
+
+    \begin{itemize}
+        \item Integrating \textbf{explainable AI (XAI)} tools such as SHAP, LIME, and counterfactual reasoning 
+        to make model predictions interpretable.
+        \item Designing \textbf{human-in-the-loop fraud detection systems} where fraud analysts interact with 
+        model outputs and provide feedback.
+        \item Studying \textbf{explainability-performance trade-offs} across different model families.
+    \end{itemize}
+
+\section*{Model Deployment and Real-Time Constraints}
+
+Fraud detection often requires decisions to be made in milliseconds. Although this study focused on 
+model performance, real-world deployment introduces new constraints:
+
+    \begin{itemize}
+        \item \textbf{Latency optimization} for serving models in production-grade environments.
+        \item \textbf{Scalability of ensemble methods} when processing millions of daily transactions.
+        \item \textbf{Robust monitoring pipelines} for drift detection, retraining alerts, and anomaly 
+        detection at scale.
+    \end{itemize}
+
+\section*{Hybrid and Multi-Model Architectures}
+
+Based on this study, individual models excel in different areas—LightGBM provides high precision, 
+XGBoost balances recall and precision, and Random Forest offers robustness. Future systems can combine 
+these strengths by:
+
+    \begin{itemize}
+        \item Building \textbf{stacked or blended ensemble architectures} that fuse outputs from multiple 
+        high-performing models.
+        \item Investigating \textbf{multi-stage fraud detection pipelines}, where lightweight linear models 
+        filter transactions before more complex models perform final classification.
+        \item Applying \textbf{graph neural networks (GNNs)}, which model customer–merchant relationships 
+        and transaction networks for enhanced fraud pattern recognition.
+    \end{itemize}
+
+\section*{Future Research Summary}
+
+The findings from this research demonstrate that fraud detection remains a challenging and evolving 
+problem requiring continuous innovation. The most promising directions include leveraging advanced 
+generative models, deploying drift-aware architectures, integrating cost-sensitive learning, enhancing 
+interpretability, and building scalable real-time systems.
+
+As digital financial systems continue to expand, fraudsters will adapt their strategies, making 
+adaptive, transparent, and robust AI-driven fraud detection essential for protecting consumers and 
+institutions in the coming years.
