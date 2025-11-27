@@ -1,16 +1,10 @@
 % !TeX root = ../main.tex
 
-While this study provides a detailed evaluation of multiple machine learning models for credit card 
-fraud detection, several opportunities remain for enhancing model robustness, scalability, and 
-real-world applicability. This chapter highlights the key directions for future research based on the 
-observations, limitations, and insights drawn from the experiments.
+Although this study offers a thorough assessment of numerous machine learning models for credit card fraud detection, there are still a number of ways to improve the models' scalability, robustness, and practicality.  Based on the findings, constraints, and conclusions from the experiments, this chapter outlines the main avenues for further investigation.
 
 \section*{Enhancing Data Quality and Diversity}
 
-A major limitation in fraud detection research is the reliance on a small number of publicly available 
-datasets, such as the European Credit Card Fraud dataset. Although this dataset reflects real-world 
-class imbalance, it is temporally narrow and anonymized through PCA transformations. Future work can 
-expand this research by:
+The dependence on a limited number of publicly accessible datasets, like the European Credit Card Fraud dataset, is a significant limitation in fraud detection research.  This dataset is temporally limited and anonymized via PCA transforms, despite reflecting class inequality in the real world.  This research can be expanded in the future by:
 
     \begin{itemize}
         \item Incorporating additional datasets from different banks, regions, and time periods to 
@@ -23,9 +17,8 @@ expand this research by:
 
 \section*{Advanced Data Balancing and Augmentation}
 
-This study highlighted the challenges posed by synthetic oversampling techniques such as SMOTE and GAN. 
-While these methods increased minority sample volume, they often caused distribution drift and severe 
-overfitting. Future work may focus on:
+The difficulties presented by artificial oversampling methods like SMOTE and GAN were brought to light in this work. 
+    Although these techniques boosted the number of minority samples, they frequently resulted in significant overfitting and distribution drift.  Future research could concentrate on:
 
     \begin{itemize}
         \item Developing \textbf{generative models constrained by real fraud manifolds}, ensuring 
@@ -38,9 +31,7 @@ overfitting. Future work may focus on:
 
 \section*{Temporal and Streaming Fraud Detection}
 
-Fraud patterns evolve rapidly due to adversarial adaptation, seasonal behaviour, and emerging attack 
-vectors. The static models trained in this study assume that the data distribution remains stable over 
-time. Future work should investigate:
+Because of seasonal behavior, adversarial adaptation, and new attack channels, fraud tendencies change quickly.  The data distribution is assumed to be steady over time by the static models trained in this study.  Future research ought to look into:
 
     \begin{itemize}
         \item \textbf{Online learning and streaming algorithms} capable of updating fraud patterns 
@@ -52,9 +43,7 @@ time. Future work should investigate:
 
 \section*{Cost-Sensitive and Risk-Aware Modelling}
 
-The financial impact of false positives and false negatives is not symmetric. Missing a fraud event is 
-far more costly than flagging a legitimate transaction. This study used conventional classification 
-metrics, but real-world fraud detection requires:
+False positives and false negatives have different financial effects.  It is significantly more expensive to overlook a fraud event than to report a valid transaction.  Although traditional classification measures were employed in this study, actual fraud detection necessitates:
 
     \begin{itemize}
         \item \textbf{Cost-sensitive learning frameworks} that incorporate transaction value, customer risk, 
@@ -66,9 +55,7 @@ metrics, but real-world fraud detection requires:
 
 \section*{Explainability and Regulatory Compliance}
 
-Financial institutions require transparent and explainable models to comply with auditing standards and 
-customer transparency regulations. Although ensemble models such as XGBoost and LightGBM were among the 
-best performers in this study, their complexity poses challenges.
+To adhere to auditing standards and customer transparency laws, financial institutions need models that are clear and understandable.  Despite being among the top performers in our study, ensemble models like XGBoost and LightGBM present difficulties due to their intricacy.
 
 Future research may focus on:
 
@@ -82,8 +69,7 @@ Future research may focus on:
 
 \section*{Model Deployment and Real-Time Constraints}
 
-Fraud detection often requires decisions to be made in milliseconds. Although this study focused on 
-model performance, real-world deployment introduces new constraints:
+Decisions must frequently be taken in milliseconds in order to detect fraud.  While model performance was the main emphasis of this study, real-world implementation imposes additional limitations:
 
     \begin{itemize}
         \item \textbf{Latency optimization} for serving models in production-grade environments.
@@ -94,9 +80,7 @@ model performance, real-world deployment introduces new constraints:
 
 \section*{Hybrid and Multi-Model Architectures}
 
-Based on this study, individual models excel in different areas—LightGBM provides high precision, 
-XGBoost balances recall and precision, and Random Forest offers robustness. Future systems can combine 
-these strengths by:
+According to this study, each model performs well in a different way: Random Forest gives robustness, XGBoost strikes a balance between recall and precision, and LightGBM offers high precision.  These advantages can be combined in future systems by:
 
     \begin{itemize}
         \item Building \textbf{stacked or blended ensemble architectures} that fuse outputs from multiple 
@@ -109,11 +93,6 @@ these strengths by:
 
 \section*{Future Research Summary}
 
-The findings from this research demonstrate that fraud detection remains a challenging and evolving 
-problem requiring continuous innovation. The most promising directions include leveraging advanced 
-generative models, deploying drift-aware architectures, integrating cost-sensitive learning, enhancing 
-interpretability, and building scalable real-time systems.
+The results of this study show that fraud detection is still a difficult and changing issue that calls for constant innovation.  Using sophisticated generative models, implementing drift-aware architectures, incorporating cost-sensitive learning, improving interpretability, and creating scalable real-time systems are some of the most promising avenues.
 
-As digital financial systems continue to expand, fraudsters will adapt their strategies, making 
-adaptive, transparent, and robust AI-driven fraud detection essential for protecting consumers and 
-institutions in the coming years.
+    Fraudsters will modify their tactics as digital financial systems grow, thus in the upcoming years, robust, transparent, and adaptive AI-driven fraud detection will be crucial for safeguarding institutions and consumers.

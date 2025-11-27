@@ -1,449 +1,459 @@
 % !TeX root = ../main.tex
 
-This chapter presents the data analysis process conducted prior to model development. The goal of this stage was to understand the structure, quality, and distribution of the dataset and to identify any issues that could affect training or evaluation. The analysis was carried out step-by-step, with each step guided by a specific purpose and supported by visualizations to better understand the underlying patterns.
+The data analysis procedure carried out before model creation is presented in this chapter.  Understanding the dataset's distribution, quality, and structure as well as spotting any problems that would interfere with training or assessment were the objectives of this phase.  In order to better grasp the underlying patterns, the analysis was conducted step-by-step, with each stage directed by a specific aim and accompanied by visualizations.
 
-% ================================
-% Data Import and Initial Inspection
-% ================================
-\section*{Importing Required Libraries}
-The analysis began by importing essential Python libraries such as \texttt{pandas}, \texttt{numpy}, \texttt{matplotlib}, \texttt{seaborn}, and \texttt{scikit-learn}. 
+    % ================================
+    % Data Import and Initial Inspection
+    % ================================
+    \section*{Importing Required Libraries}
+    Imported Python libraries \texttt{pandas}, \texttt{numpy}, \texttt{matplotlib}, \texttt{seaborn}, and \texttt{scikit-learn} was the first step in the analysis. 
+    
+    These libraries are the cornerstone of the my entire workflow by offering tools for statistical research, data manipulation, and visualization.
+    
+    \section*{Loading the Dataset}
+    I loaded the European Credit Card Fraud Dataset into a pandas DataFrame so it would be easier to work with.
+    
+    Once it was in that format, I could actually inspect it properly, clean it up, apply the transformations I needed, and start visualizing things. Converting the raw CSV into a DataFrame basically gave me a clean, structured version of the data to build the rest of the analysis on.
+    
+    \section*{Checking for Missing Values}
+    First I  looked for any missing entries in the dataset, just to be sure everything was complete.
+    
+    Since the dataset didn’t have any missing values, I didn’t need to fill anything in or remove incomplete rows. That made things easier and confirmed that the data was ready to be used right away.
+    
+    \section*{Duplicate Record Checking}
+    I also checked whether the dataset contained duplicate rows, because repeated entries can influence how a model learns. Using \texttt{df.duplicated().sum()}, I found that there were 1,081 duplicates. With such an imbalanced dataset, even a small number of repeated samples can distort the learning process.
+    
+    After finishing the exploratory analysis, I removed all duplicate records so they wouldn’t interfere with the later steps.
+    
+    % ================================
+    % Exploratory Data Analysis (EDA)
+    % ================================
+    \section*{Exploratory Data Analysis (EDA)}
+    
+    Before jumping into model-building, I spent time exploring the dataset to get a better sense of what the data looked like, how the features behaved, and whether anything unusual needed attention. This helped me understand the structure of the dataset and spot patterns or issues that might affect the way the models learn later on.
+    
+        \subsection*{Dataset Information}
+        I started by checking the dataset summary using \texttt{df.info()}.
+        This gave me a quick look at the data types and how much memory everything was using.
+        Since all the features were already numerical (because they’re PCA components), there was no need for extra encoding. Everything was clean and non-null, which made things easier moving forward.
+    
+        \subsection*{Dataset Dimensions}
+        With \texttt{df.shape}, I verified the size of the dataset:
+        284,807 rows and 31 columns, including the target label.
+        This confirmed that the data had loaded correctly and nothing was missing.
+    
+        \subsection*{Fraud vs. Legitimate Class Count}
+        To understand how the classes were distributed, I checked class count. Out of all transactions, only 492 were marked as fraud---a tiny portion compared to legitimate ones.  
+        
+        This imbalance becomes even more obvious when you look at the numbers side by side.
 
-These libraries provide tools for data manipulation, visualization, and statistical exploration, forming the foundation of the entire workflow.
+        \subsection*{Fraud Percentage}
+        Fraud percentage was computed as:
+        \[
+        \text{Fraud Rate} = \frac{492}{284{,}807} \times 100 = 0.172\%
+        \]
 
-\section*{Loading the Dataset}
-The European Credit Card Fraud Dataset was loaded into a pandas DataFrame.
+        \textbf{Outcome:} With such a tiny percentage, it was clear that I would need some form of resampling or a cost-sensitive approach to help models learn the minority class properly.
 
-Converting the raw CSV file into a DataFrame allowed efficient inspection, filtering, transformation, and visualization.
+    
+        \subsection*{Class Imbalance Bar Plot}
+        As shown in Figure~4.1, the bar plot visually illustrates the imbalance between legitimate and fraudulent classes.
 
-This step ensured that the dataset was accessible in a structured format for all subsequent analysis.
+        \begin{figure}[H]
+            \centering
+            \includegraphics[width=0.8\textwidth]{images/class-imbalance.png}
+            \caption{Bar chart showing class distribution (Fraud vs. Legitimate).}
+        \end{figure}
+        \textbf{Insight:} The imbalance is visually significant, reinforcing the need for balanced sampling strategies.
+    
+        \subsection*{QQ Plots and Histograms}
+        To understand how the features were distributed, I generated QQ plots and histograms for each one.
 
-\section*{Checking for Missing Values}
-To ensure data completeness, the entire dataset was scanned for missing entries.
+        \begin{figure}[H]
+            \centering
+            \includegraphics[width=0.8\textwidth]{images/hist-qq-plot-1.png}
+            \caption{Example QQ plot for feature distribution.}
+        \end{figure}
 
-\textbf{Observation:} The dataset contained \textbf{no missing values}, allowing the analysis to proceed without imputation or removal of incomplete records.
+        Some features had long tails or were slightly skewed, which isn't surprising given that they're PCA-transformed.
 
-This confirmed the reliability of the dataset for direct use.
+        \subsection*{Correlation Heatmap}
 
-\section*{Checking for Duplicate Records}
-Duplicate entries can bias model training by repeating identical patterns. The command \texttt{df.duplicated().sum()} was used to detect redundancy.
+        Next, I looked at how the features relate to each other using a correlation heatmap.
 
-\textbf{Observation:} A small number of duplicate rows (1081) were identified. Their presence can distort learning algorithms, especially under extreme imbalance.
+        \begin{figure}[H]
+            \centering
+            \includegraphics[width=0.8\textwidth]{images/heatmap.png}
+            \caption{Correlation heatmap of PCA-transformed features.}
+        \end{figure}
 
-\textbf{Action:} All duplicate records were removed after completing the exploratory analysis.
+        Most features didn't show strong correlations with each other---which fits with what PCA does, since it creates components that are essentially orthogonal.
 
-% ================================
-% Exploratory Data Analysis (EDA)
-% ================================
-\section*{Exploratory Data Analysis (EDA)}
+        \subsection*{Scatter Plot with Linear Fit}
 
-EDA was performed to understand the dataset’s structure, class distribution, and feature behavior. It also helped identify datapoints or patterns that could negatively impact model performance.
+        I also plotted scatter plots with linear fits to see how individual features behaved relative to the target label.
 
-    \subsection*{Dataset Information}
-    \texttt{df.info()} was used to inspect data types and memory usage.
+        \begin{figure}[H]
+            \centering
+            \includegraphics[width=0.8\textwidth]{images/scatter-plot-with-linear-fit-1.png}
+            \includegraphics[width=0.8\textwidth]{images/scatter-plot-with-linear-fit-2.png}
+            \caption{Scatter plot with linear fit illustrating relationship between a selected feature and Target Class.}
+        \end{figure}
 
-    \textbf{Reason:} To verify that all features were numerical (PCA components) and ready for ML models without additional encoding.
+        Fraudulent transactions often clustered in a narrow range, especially for features like V20, and the amounts involved were usually small. Legitimate transactions spread much more widely.
 
-    \textbf{Outcome:} All columns were confirmed as numerical and non-null.
+        \subsection*{KDE Plots}
 
-    \subsection*{Dataset Dimensions}
-    Using \texttt{df.shape}, the total number of rows (284,807) and columns (31 including the target) was confirmed.
+        To get a sense of how feature values were distributed, I plotted KDE curves.
 
-    \textbf{Outcome:} This validated that the dataset was loaded correctly and complete.
+        \begin{figure}[H]
+            \centering
+            \includegraphics[width=0.8\textwidth]{images/kdeplot.png}
+            \caption{KDE plot illustrating density variation of a selected feature.}
+        \end{figure}
 
-    \subsection*{Fraud vs. Legitimate Class Count}
-    The counts for each class were computed using \texttt{value\_counts()}.
+        These density plots gave a smoother view of the feature distributions.  
+        While they don't directly explain the meaning of the features (because PCA components are abstract), they still helped reveal overall patterns and differences.
 
-    \textbf{Observation:} Only 492 transactions were fraudulent, clearly illustrating extreme class imbalance.
+    
+    % ================================
+    % Data Cleaning
+    % ================================
+    \section*{Removing Duplicate Rows}
+    After completing EDA, all duplicate records were removed to prevent training bias.
+    
+    \textbf{Reason:} Duplicate entries can exaggerate patterns and degrade model fairness.  
+    
+    \textbf{Outcome:} The final cleaned dataset contained only unique transactions. 283726 Columns remained for model training and evaluation.
+    
+    % ================================
+    % Data Preprocessing Pipeline
+    % ================================
+    
+    \section*{Pipeline: Data Preprocessing and Feature Engineering}
+    
+    The initial preparation pipeline was created to convert the raw dataset into a format better suited for machine learning after the exploratory data analysis.  The three main components of this pipeline were PCA-based feature rectification, amount transformation, and time feature engineering.  Every transformation was carried out in accordance with the findings from the EDA, specifically the skewness, distribution shape, and temporal behavior of the transactions.
+    
+        \subsection*{Implementation of the Preprocessing Pipeline}
 
-    \subsection*{Fraud Percentage}
-    Fraud percentage was computed as:
-    \[
-    \text{Fraud Rate} = \frac{492}{284{,}807} \times 100 = 0.172\%
-    \]
-    \textbf{Outcome:} This confirmed the necessity for applying resampling or cost-sensitive methods during model training.
+        To keep the workflow organized and easy to repeat later, I set up the preprocessing steps using scikit-learn's Pipeline. This made sure every transformation happened in the same order each time, which really helped avoid accidental data leakage or inconsistencies when I re-ran experiments. With everything flowing through one structured path, cleaning and preparing the data became a lot easier to manage.
 
-    \subsection*{Class Imbalance Bar Plot}
-    A bar plot was generated to visually illustrate the imbalance between legitimate and fraudulent classes.
-    \begin{figure}[H]
-        \centering
-        \includegraphics[width=0.8\textwidth]{images/class-imbalance.png}
-        \caption{Bar chart showing class distribution (Fraud vs. Legitimate).}
-    \end{figure}
-    \textbf{Insight:} The imbalance is visually significant, reinforcing the need for balanced sampling strategies.
+        For the parts that needed custom logic---like turning the Time column into cyclical components, applying a log transform to the Amount feature, or adjusting the PCA components---I wrapped those functions using \texttt{FunctionTransformer}. It kept things neat and flexible, and I could swap things in or out without breaking the rest of the code. Each step fit into the pipeline naturally, which meant I didn't have to worry about manually repeating transformations later.
 
-    \subsection*{QQ Plots and Histograms for Outliers}
-    For each feature, QQ plots and histograms were generated to identify potential outliers and distribution shapes.
-    \begin{figure}[H]
-        \centering
-        \includegraphics[width=0.8\textwidth]{images/hist-qq-plot-1.png}
-        \caption{Example QQ plot for feature distribution.}
-    \end{figure}
-    \textbf{Observation:} Several features showed heavy tails and skewness, which is expected due to PCA transformation.
+        Setting things up this way ensured that the same preprocessing steps were applied during both training and testing. It also made the whole experiment more reliable since nothing changed accidentally between runs.
 
-    \subsection*{Correlation Heatmap}
-    A correlation matrix was visualized using a heatmap to examine feature relationships.
-    \begin{figure}[H]
-        \centering
-        \includegraphics[width=0.8\textwidth]{images/heatmap.png}
-        \caption{Correlation heatmap of PCA-transformed features.}
-    \end{figure}
-    \textbf{Outcome:} Most features displayed low correlation, consistent with PCA’s orthogonal nature.
+        \subsection*{Feature Engineering for Time}
 
-    \subsection*{Scatter Plot with Linear Fit}
-    Scatter plot with a regression line, used to explore correlations/pattern between PCA features and Target Class.
-    \begin{figure}[H]
-        \centering
-        \includegraphics[width=0.8\textwidth]{images/scatter-plot-with-linear-fit-1.png}
-        \includegraphics[width=0.8\textwidth]{images/scatter-plot-with-linear-fit-2.png}
-        \caption{Scatter plot with linear fit illustrating relationship between a selected feature and Target Class.}
-    \end{figure}
-    \textbf{Insight:} Fraudulent transactions are small in amount and occur when V20 is in a narrow range, while normal transactions vary widely in both amount and V20.
+        The Time column in the dataset simply counts seconds from the first recorded transaction. By itself, it doesn't say much about daily behavior or recurring patterns. To make it more meaningful, I created additional features that capture how transactions behave across different times of the day, because the raw number alone doesn't reflect those cyclical patterns.
 
-    \subsection*{KDE Plots for Feature Density}
-    Kernel Density Estimation (KDE) plots were generated to visualize density variations for each feature.
-    \begin{figure}[H]
-        \centering
-        \includegraphics[width=0.8\textwidth]{images/kdeplot.png}
-        \caption{KDE plot illustrating density variation of a selected feature.}
-    \end{figure}
-    \textbf{Insight:} Differences in density helped understand individual feature behaviors without providing direct interpretability (due to PCA).
-
-% ================================
-% Data Cleaning
-% ================================
-\section*{Removing Duplicate Rows}
-After completing EDA, all duplicate records were removed to prevent training bias.
-
-\textbf{Reason:} Duplicate entries can exaggerate patterns and degrade model fairness.  
-
-\textbf{Outcome:} The final cleaned dataset contained only unique transactions. 283726 Columns remained for model training and evaluation.
-
-% ================================
-% Data Preprocessing Pipeline
-% ================================
-
-\section*{Pipeline: Data Preprocessing and Feature Engineering}
-
-Following the exploratory data analysis, the first preprocessing pipeline was designed to transform the raw dataset into a format more suitable for machine learning. This pipeline focused on three major components: Time feature engineering, Amount transformation, and PCA-based feature correction. Each transformation was performed based on the observations made during EDA, particularly skewness, distribution shape, and temporal behaviour of transactions.
-
-    \subsection*{Implementation of the Preprocessing Pipeline}
-
-    All preprocessing steps were implemented using the \texttt{Pipeline} utility from \texttt{scikit-learn} to ensure a clean, modular, and reproducible workflow. The use of \texttt{Pipeline} allowed each transformation—such as Time feature engineering, Amount transformation, and PCA component correction—to be executed in a fixed and verifiable order, preventing data leakage and maintaining consistency across experiments.
-
-    Custom feature-engineering functions (e.g., Time cyclical encoding, log transformation of Amount, and Yeo–Johnson correction for PCA features) were wrapped using the \texttt{FunctionTransformer} class. This allowed each transformation to be integrated seamlessly into the pipeline while keeping the codebase modular and easily configurable.
-
-    Incorporating these tools ensured that the same preprocessing steps were applied during both training and inference, supporting reproducibility and maintaining the integrity of the machine learning experiments.
+    
+        \paragraph{(a) Cyclical Encoding}
+        Sinusoidal encodings were used to depict the periodic character of time:
+        \[
+        \text{Time\_sin} = \sin\left(2\pi \cdot \frac{\text{Time}}{86400}\right)
+        \]
+        \[
+        \text{Time\_cos} = \cos\left(2\pi \cdot \frac{\text{Time}}{86400}\right)
+        \]
+        These encodings allow models to understand time-of-day continuity, such as the closeness of 23:59 and 00:01.
+    
+        \paragraph{(b) Time Binning}
+        Using a \texttt{OneHotEncoder}, the \textit{Time} column was binned into intuitive daily categories:
+        \[
+        \{\text{time\_period\_morning},\ \text{time\_period\_evening},\ \text{time\_period\_night}\}
+        \]
+        Because fraudulent activity tends to peak over certain periods, this transformation captures behavioral variances across time windows.
+    
+        \paragraph{Outcome:}  
+        Compared to the raw continuous \textit{Time} column, the designed characteristics offered a more detailed depiction of temporal behavior.  The initial \textit{Time} column was eliminated after encoding.
+    
+        \begin{figure}[H]
+            \centering
+            \includegraphics[width=0.8\textwidth]{time_engg.png}
+            \caption{Cyclical transformation and binning of Time feature.}
+        \end{figure}
+    
+        % -----------------------------------------------------------
+    
+        \subsection*{Feature Engineering for \textit{Amount}}
+        The \textit{Amount} feature showed a strong positive skew, according to EDA.  Financial variables that are skewed can affect algorithms that are sensitive to magnitude and distributions and skew model learning.
+    
+        \paragraph{(a) Skewness Check}
+        The skewness statistic for the \textit{Amount} column confirmed the presence of long-tail behaviour typical in monetary values.
+    
+        \paragraph{(b) Log Transformation}
+        To normalize the distribution and reduce the effect of large outliers, a log transformation was applied:
+        \[
+        \text{Amount\_log} = \log(1 + \text{Amount})
+        \]
+        This stabilizes variance and improves model robustness.
+    
+        \paragraph{Outcome:}  
+        The transformed variable follows a more compact, approximately normal distribution, improving compatibility with distance-based and linear models. The original \textit{Amount} column was dropped after transformation.
+    
+        \begin{figure}[H]
+            \centering
+            \includegraphics[width=0.8\textwidth]{amount_engg.png}
+            \caption{Log-transformed Amount distribution.}
+        \end{figure}
+    
+        % -----------------------------------------------------------
+    
+        \subsection*{Feature Engineering for PCA Components (V1–V28)}
+        There are 28 PCA-transformed features (V1–V28) in the dataset.  Despite the fact that PCA typically yields uncorrelated components, EDA revealed that a number of these variables had notable skewness and kurtosis.
+    
+        \paragraph{(a) Identifying Problematic Features}
+        For each PCA component, skewness and kurtosis were computed:
+        \[
+        \text{Skew}(X) = \frac{\mathbb{E}[(X - \mu)^3]}{\sigma^3}
+        \qquad
+        \text{Kurtosis}(X) = \frac{\mathbb{E}[(X - \mu)^4]}{\sigma^4}
+        \]
+        Features with extreme deviations from normality were marked for transformation.
+    
+        \paragraph{(b) Yeo-Johnson Power Transformation}
+        Since several PCA components contained negative values, the Yeo-Johnson transformation was chosen:
+        \[
+        X_{new} = 
+        \begin{cases}
+        \frac{(X + 1)^\lambda - 1}{\lambda}, & X \geq 0, \lambda \neq 0 \\
+        -\frac{(-X + 1)^{2 - \lambda} - 1}{2 - \lambda}, & X < 0, \lambda \neq 2
+        \end{cases}
+        \]
+        The \texttt{PowerTransformer} implementation in scikit-learn was used.
+    
+        \paragraph{Reason:}  Yeo-Johnson handles both positive and negative values and stabilizes variance effectively.
+    
+        \paragraph{Outcome:}  The transformed PCA features shows improved symmetry and reduced outlier impact.
+    
+        \begin{figure}[H]
+            \centering
+            \includegraphics[width=0.8\textwidth]{pca_engg.png}
+            \caption{Skewness and kurtosis correction applied to PCA features.}
+        \end{figure}
+    
     % -----------------------------------------------------------
+    
+    \section*{Summary of the Preprocessing Pipeline}
 
-    \subsection*{Feature Engineering for \textit{Time}}
-    The \textit{Time} feature represents the number of seconds elapsed since the first transaction in the dataset. Since the raw numerical value does not directly capture cyclical patterns present in daily transaction behaviour, additional engineered features were created.
+    To clean things up before training any models, I made a few adjustments to the data.
+    The Time column was reshaped so it could show its natural daily patterns instead of just being a long count of seconds. The Amount values were log-scaled to soften the heavy skew in spending amounts. And for the PCA components that still looked off---the ones with strong skew or unusually heavy tails---I applied a Yeo--Johnson transformation to make them behave more smoothly.
 
-    \paragraph{(a) Cyclical Encoding}
-    To represent the periodic nature of time, sinusoidal encodings were applied:
-    \[
-    \text{Time\_sin} = \sin\left(2\pi \cdot \frac{\text{Time}}{86400}\right)
-    \]
-    \[
-    \text{Time\_cos} = \cos\left(2\pi \cdot \frac{\text{Time}}{86400}\right)
-    \]
-    These encodings allow models to understand time-of-day continuity, such as the closeness of 23:59 and 00:01.
+    Together, these steps improved the overall quality of the features and helped keep the models from picking up strange biases. They also set the stage for the balancing steps and the training pipeline that came later.
 
-    \paragraph{(b) Time Binning}
-    Using a \texttt{OneHotEncoder}, the \textit{Time} column was binned into intuitive daily categories:
-    \[
-    \{\text{time\_period\_morning},\ \text{time\_period\_evening},\ \text{time\_period\_night}\}
-    \]
-    This transformation captures behavioural differences across time windows, which is relevant because fraudulent activities tend to peak during specific periods.
+    
+    % ================================
+    % Time aware Scaling
+    % ================================
+    \section*{Time-Aware Splitting and Feature Scaling}
+    
+    After the feature engineering steps were done, the next thing I handled was scaling. Since most machine-learning models expect the inputs to be on somewhat similar ranges, scaling the numeric features was important.
 
-    \paragraph{Outcome:}  
-    The engineered features provided a richer representation of temporal behaviour than the raw continuous \textit{Time} column. After encoding, the original \textit{Time} column was removed.
+    But instead of splitting the data randomly, I used a time-based approach. Because the transactions arrive in order, mixing past and future information would make the results unrealistic. A model shouldn't ``see'' the future when it's being trained.
 
-    \begin{figure}[H]
-        \centering
-        \includegraphics[width=0.8\textwidth]{time_engg.png}
-        \caption{Cyclical transformation and binning of Time feature.}
-    \end{figure}
+        \subsection*{Time-Aware Splitting with TimeSeriesSplit}
 
-    % -----------------------------------------------------------
+        Using \texttt{TimeSeriesSplit}, I divided the dataset so that training always happened on older transactions, and validation/testing happened on later ones. This mirrors what would happen in real use---you train on what you've already seen and try to predict what comes next.
 
-    \subsection*{Feature Engineering for \textit{Amount}}
-    EDA revealed that the \textit{Amount} feature exhibited high positive skew. Skewed financial variables can bias model learning and impact algorithms sensitive to magnitude and distributions.
+        \textbf{Outcome:}  
+        This setup helped avoid overly optimistic results and kept the evaluation honest by ensuring the model never learned patterns from future data.
+    
+        % -----------------------------------------------------------
+        
+        \subsection*{Scaling the Amount Feature with RobustScaler}
 
-    \paragraph{(a) Skewness Check}
-    The skewness statistic for the \textit{Amount} column confirmed the presence of long-tail behaviour typical in monetary values.
+        Even after applying a log transform, the \texttt{Amount\_log} feature still had some extreme outliers. To keep those from throwing the models off, I scaled this feature using \texttt{RobustScaler}, but only on the training portion of the data.
+        
+        \[
+        X_{\text{scaled}} = \frac{X - \text{median}(X)}{\text{IQR}(X)}
+        \]
 
-    \paragraph{(b) Log Transformation}
-    To normalize the distribution and reduce the effect of large outliers, a log transformation was applied:
-    \[
-    \text{Amount\_log} = \log(1 + \text{Amount})
-    \]
-    This stabilizes variance and improves model robustness.
+        \texttt{RobustScaler} works differently from standard scaling---it uses the median and the interquartile range instead of the mean and standard deviation. That makes it far less sensitive to the unusually large values that often appear in financial datasets.
 
-    \paragraph{Outcome:}  
-    The transformed variable follows a more compact, approximately normal distribution, improving compatibility with distance-based and linear models. The original \textit{Amount} column was dropped after transformation.
+        \textbf{Outcome:}  
+        Once scaled, the \texttt{Amount\_log} feature fit in much better with the rest of the inputs, and it no longer overshadowed other features during model training.
 
-    \begin{figure}[H]
-        \centering
-        \includegraphics[width=0.8\textwidth]{amount_engg.png}
-        \caption{Log-transformed Amount distribution.}
-    \end{figure}
-
-    % -----------------------------------------------------------
-
-    \subsection*{Feature Engineering for PCA Components (V1–V28)}
-    The dataset includes 28 PCA-transformed features (V1–V28). Although PCA generally produces uncorrelated components, EDA showed that several of these variables exhibited significant skewness and kurtosis.
-
-    \paragraph{(a) Identifying Problematic Features}
-    For each PCA component, skewness and kurtosis were computed:
-    \[
-    \text{Skew}(X) = \frac{\mathbb{E}[(X - \mu)^3]}{\sigma^3}
-    \qquad
-    \text{Kurtosis}(X) = \frac{\mathbb{E}[(X - \mu)^4]}{\sigma^4}
-    \]
-    Features with extreme deviations from normality were marked for transformation.
-
-    \paragraph{(b) Yeo-Johnson Power Transformation}
-    Since several PCA components contained negative values, the Yeo-Johnson transformation was chosen:
-    \[
-    X_{new} = 
-    \begin{cases}
-    \frac{(X + 1)^\lambda - 1}{\lambda}, & X \geq 0, \lambda \neq 0 \\
-    -\frac{(-X + 1)^{2 - \lambda} - 1}{2 - \lambda}, & X < 0, \lambda \neq 2
-    \end{cases}
-    \]
-    The \texttt{PowerTransformer} implementation in scikit-learn was used.
-
-    \paragraph{Reason:}  Yeo-Johnson handles both positive and negative values and stabilizes variance more effectively than log-based methods for PCA features.
-
-    \paragraph{Outcome:}  The transformed PCA features displayed improved symmetry and reduced outlier impact, aiding model convergence and performance.
-
-    \begin{figure}[H]
-        \centering
-        \includegraphics[width=0.8\textwidth]{pca_engg.png}
-        \caption{Skewness and kurtosis correction applied to PCA features.}
-    \end{figure}
-
-% -----------------------------------------------------------
-
-\section*{Summary of Preprocessing Pipeline}
-\begin{itemize}
-    \item Time was converted into cyclical and categorical representations to capture periodic behaviour.
-    \item Amount was log-transformed to reduce skewness and stabilize variance.
-    \item PCA components with high skewness and kurtosis were corrected using Yeo-Johnson transformation.
-\end{itemize}
-
-These transformations enhanced feature quality, reduced model bias, and prepared the dataset for subsequent resampling and model-training pipelines.
-
-% ================================
-% Time aware Scaling
-% ================================
-\section*{Time-Aware Splitting and Feature Scaling}
-
-After completing feature engineering, the next step involved scaling the numerical features to ensure that the machine learning models received inputs with comparable ranges and distributions. Since credit card transactions occur sequentially over time, a time-aware splitting strategy was used to prevent information leakage and mimic real-world model deployment conditions.
-
-    \subsection*{Time-Aware Splitting Using \texttt{TimeSeriesSplit}}
-
-    The dataset was partitioned into training, validation, and test sets using \texttt{TimeSeriesSplit}.  
-    Unlike random splitting, time-based splitting ensures that the model is always trained on past data and evaluated on future data.  
-    This approach is essential for fraud detection, where temporal drift is common and chronological consistency must be preserved.
-
-    \paragraph{Outcome:} A clean separation between past and future transactions was maintained, reducing the risk of over-optimistic results due to data leakage.
-
-    % -----------------------------------------------------------
-
-    \subsection*{Scaling the \textit{Amount} Feature Using RobustScaler}
-
-    The \textit{Amount\_log} feature (created during feature engineering) remained sensitive to outliers despite log transformation.  
-    To further stabilize its scale, the \texttt{RobustScaler} was applied on the training portion of the data.
-
-    \[
-    X_{\text{scaled}} = \frac{X - \text{median}(X)}{\text{IQR}(X)}
-    \]
-
-    \paragraph{Reason:} RobustScaler uses medians and interquartile ranges, making it resistant to outliers common in financial datasets.
-
-    \paragraph{Outcome:} The transformed \textit{Amount\_log} feature now contributed proportionally during model training without being dominated by extreme values.
-
-    % -----------------------------------------------------------
-
-    \subsection*{Scaling PCA Components (V1–V28) Using StandardScaler}
-
-    The PCA components (\(V1\)–\(V28\)) were scaled using \texttt{StandardScaler}:
-
-    \[
-    X_{\text{scaled}} = \frac{X - \mu}{\sigma}
-    \]
-
-    \paragraph{Reason:} Many models—especially SVM, Logistic Regression, and KNN—perform best when features follow a standardized normal distribution.  
-    Standardization ensured that PCA components remained comparable in range without distorting their variance structure.
-
-    \paragraph{Outcome:} The PCA components were brought onto a common scale, improving model efficiency and numerical stability.
-
-    % -----------------------------------------------------------
-
-    \subsection*{Scaling Time Features Using MinMaxScaler}
-
-    The engineered time features (\textit{Time\_sin}, \textit{Time\_cos}, and time bins) were scaled to the range \([0, 1]\) using \texttt{MinMaxScaler}:
-
-    \[
-    X_{\text{scaled}} = \frac{X - X_{\text{min}}}{X_{\text{max}} - X_{\text{min}}}
-    \]
-
-    \paragraph{Reason:} Cyclical features lie within bounded ranges, and MinMax scaling preserves relative distances without altering the underlying sinusoidal structure.
-
-    \paragraph{Outcome:} All time-related features were normalized in a way that maintained their cyclic relationships.
-
-    % -----------------------------------------------------------
-
-    \subsection*{Assembly of Final Outputs}
-
-    After scaling was applied to each feature group, the function returned the following:
-
+        
+        % -----------------------------------------------------------
+    
+        \subsection*{Scaling PCA Components (V1–V28) Using StandardScaler}
+    
+        The PCA components (\(V1\)–\(V28\)) were scaled using \texttt{StandardScaler}:
+    
+        \[
+        X_{\text{scaled}} = \frac{X - \mu}{\sigma}
+        \]
+    
+        \paragraph{Reason:} When features have a standardized normal distribution, several models—particularly SVM, Logistic Regression, and KNN—perform best.  
+         Standardization prevented the variance structure of PCA components from being distorted while maintaining comparability in range.
+    
+        \paragraph{Outcome:} The model's efficiency and numerical stability were enhanced by bringing the PCA components onto a common scale.
+    
+        % -----------------------------------------------------------
+    
+        \subsection*{Scaling Time Features Using MinMaxScaler}
+    
+        The engineered time features (\textit{Time\_sin}, \textit{Time\_cos}, and time bins) were scaled to the range \([0, 1]\) using \texttt{MinMaxScaler}:
+    
+        \[
+        X_{\text{scaled}} = \frac{X - X_{\text{min}}}{X_{\text{max}} - X_{\text{min}}}
+        \]
+    
+        \paragraph{Reason:} MinMax scaling maintains relative distances without changing the underlying sinusoidal structure, and cyclical features fall within defined ranges.
+    
+        \paragraph{Outcome:} In order to preserve their cyclic links, all time-related features were normalized.
+    
+        % -----------------------------------------------------------
+    
+        \subsection*{Assembly of Final Outputs}
+    
+        After scaling was applied to each feature group, the function returned the following:
+    
+        \begin{itemize}
+            \item $X_{\text{train}}, X_{\text{valid}}, X_{\text{test}}$  
+            \item $y_{\text{train}}, y_{\text{valid}}, y_{\text{test}}$  
+            \item Updated \textit{feature\_names} list containing all transformed and engineered features
+        \end{itemize}
+    
+        \paragraph{Outcome:} For use in the balancing process and model training, a fully scaled, time-aware, and leakage-free dataset was produced.
+    
+    % ================================
+    % Data Balancing
+    % ================================
+    \section*{Pipeline: Data Balancing, Feature Selection, and Prototype Selection}
+    
+    Because the percentage of fraudulent transactions is so low, class imbalance poses a significant obstacle to credit card fraud detection.  In order to solve this, a specific data balancing pipeline was built utilizing the \texttt{Pipeline} class from \texttt{imblearn.pipeline}.  The preprocessing and balancing procedures used on the training data prior to model training are standardized by this pipeline.
+    
+        \subsection*{SMOTE-Based Oversampling}
+    
+        The first balancing approach applied within the pipeline was \textbf{Synthetic Minority Oversampling Technique (SMOTE)}.  
+        SMOTE generates synthetic minority samples by interpolating between a fraud sample and one of its nearest minority neighbors:
+        \[
+        x_{\text{new}} = x + \delta (x_{nn} - x), \qquad \delta \sim U(0,1)
+        \]
+    
+        \paragraph{Reason:}  
+        to give more varied fraud representations for the model and to expand the minority class membership without merely copying samples.
+    
+        \paragraph{Outcome:}  
+        The model's capacity to identify fraud trends during training improved as the training data grew more balanced.
+    
+        % -----------------------------------------------------------
+    
+        \subsection*{GAN-Based Oversampling (Performed Outside the Pipeline)}
+    
+        To create fake fraud samples, a \textbf{GAN-based oversampling method} was employed in addition to SMOTE.  
+        GAN augmentation was carried out outside of the \texttt{imblearn} pipeline because it necessitates a different training loop.  
+        The adversarial learning aim is how the GAN creates minority samples:
+    
+        \[
+        \min_G \max_D 
+        \mathbb{E}[\log D(x)] + \mathbb{E}[\log (1 - D(G(z)))]
+        \]
+    
+        \paragraph{Reason:}  
+        GANs produce more realistic synthetic samples compared to linear interpolation methods like SMOTE, potentially improving generalization.
+    
+        \paragraph{Outcome:}  
+        Two balanced training sets were created:  
+        \begin{itemize}
+            \item One balanced using SMOTE  
+            \item One balanced using GAN-generated fraud samples  
+        \end{itemize}
+    
+        These separate balanced datasets allow direct comparison of resampling strategies.
+    
+        % -----------------------------------------------------------
+    
+        \subsection*{Feature Selection inside the Pipeline}
+    
+        Feature selection was added to the pipeline after balancing in order to find informative qualities and reduce noise.  
+         The scikit-learn tools utilized were as follows:
+    
+        \begin{itemize}
+            \item \texttt{SelectKBest}
+            \item \texttt{mutual\_info\_classif} (non-linear dependency measure)
+            \item \texttt{f\_classif} (ANOVA F-test for linear relationships)
+        \end{itemize}
+    
+        \paragraph{Reason:}  
+        Different kinds of feature interactions are advantageous to different models.  Better resilience among classifiers is provided by combining MI-based and ANOVA-based feature selection.
+    
+        \paragraph{Outcome:}  
+        Training efficiency and interpretability were enhanced by keeping the most pertinent altered features (Time, Amount, and PCA components).
+    
+        % -----------------------------------------------------------
+    
+        \subsection*{Prototype Selection for Noise Reduction}
+    
+        To further refine the training data after SMOTE balancing, prototype selection techniques were applied:
+    
+        \begin{itemize}
+            \item \texttt{EditedNearestNeighbours (ENN)}
+            \item \texttt{TomekLinks}
+        \end{itemize}
+    
+        \paragraph{Reason:}  
+        Oversampling often increases class overlap. Prototype selection removes ambiguous or noisy samples by evaluating local neighbor structure.
+    
+        \paragraph{Outcome:}  
+        Cleaner class boundaries were obtained, reducing overlapping regions and improving classifier stability.
+    
+        % -----------------------------------------------------------
+    
+        \subsection*{Assembly of the Balancing Pipeline}
+    
+        An \texttt{imblearn} pipeline contained the whole balancing process, including SMOTE, feature selection, and optional prototype selection.  
+        GAN-based balanced data was passed downstream for training after being individually integrated.
+    
+        \begin{figure}[H]
+            \centering
+            % \includegraphics[]{balancing_pipeline.png}
+            \caption{High-level structure of the data balancing and feature-selection pipeline.}
+        \end{figure}
+    
+        % -----------------------------------------------------------
+    
+        \subsection*{Final Output for Model Training}
+    
+        After executing all steps, the pipeline returned the following:
+    
+        \begin{itemize}
+            \item Balanced training inputs: $X_{\text{train, SMOTE}}$, $X_{\text{train, GAN}}$
+            \item Validation and test sets (unchanged): $X_{\text{valid}}, X_{\text{test}}$
+            \item Corresponding label sets: $y_{\text{train}}, y_{\text{valid}}, y_{\text{test}}$
+            \item Updated \textit{feature\_names} list with all engineered and selected features
+        \end{itemize}
+    
+        \paragraph{Outcome:}  
+        Two fully balanced, feature-selected, noise-reduced datasets were obtained.  
+        These datasets formed the foundation for the upcoming model training phase.
+    
+    % ================================
+    % Model Training
+    % ================================
+    \section*{Pipeline: Model Training Setup}
+    
+    This chapter concluded with the preparation of the machine learning models for training, after the completion of data preprocessing, feature engineering, scaling, and the creation of balanced training datasets.  Establishing a uniform and regulated training environment for each classifier utilized in the study was the aim of this step.
+    
+     A wide range of machine learning methods, such as gradient-boosting ensembles, probabilistic classifiers, tree-based learners, and linear models, were chosen to represent various learning paradigms.  The models employed in this study are:
+    
     \begin{itemize}
-        \item $X_{\text{train}}, X_{\text{valid}}, X_{\text{test}}$  
-        \item $y_{\text{train}}, y_{\text{valid}}, y_{\text{test}}$  
-        \item Updated \textit{feature\_names} list containing all transformed and engineered features
+        \item Logistic Regression (LR)
+        \item Na\"ive Bayes (NB)
+        \item Decision Tree Classifier (DT)
+        \item Random Forest Classifier (RF)
+        \item XGBoost Classifier (XGB)
+        \item LightGBM Classifier (LGBM)
     \end{itemize}
-
-    \paragraph{Outcome:} A fully scaled, time-aware, and leakage-free dataset was created, ready to be used in the balancing pipeline and model training.
-
-% ================================
-% Data Balancing
-% ================================
-\section*{Pipeline: Data Balancing, Feature Selection, and Prototype Selection}
-
-Class imbalance is a major challenge in credit card fraud detection due to the extremely low proportion of fraudulent transactions. To address this, a dedicated data balancing pipeline was constructed using the \texttt{Pipeline} class from \texttt{imblearn.pipeline}. This pipeline standardizes the balancing and preprocessing operations applied to the training data before model training.
-
-    \subsection*{SMOTE-Based Oversampling}
-
-    The first balancing approach applied within the pipeline was \textbf{Synthetic Minority Oversampling Technique (SMOTE)}.  
-    SMOTE generates synthetic minority samples by interpolating between a fraud sample and one of its nearest minority neighbors:
-    \[
-    x_{\text{new}} = x + \delta (x_{nn} - x), \qquad \delta \sim U(0,1)
-    \]
-
-    \paragraph{Reason:}  
-    To increase minority class size without simply duplicating samples and to provide more diverse fraud representations for the model.
-
-    \paragraph{Outcome:}  
-    The training data became more balanced, improving the model's ability to learn fraud patterns during training.
-
-    % -----------------------------------------------------------
-
-    \subsection*{GAN-Based Oversampling (Performed Outside the Pipeline)}
-
-    In addition to SMOTE, a \textbf{GAN-based oversampling method} was used to generate synthetic fraud samples.  
-    Since GAN augmentation requires a separate training loop, it was performed outside the \texttt{imblearn} pipeline.  
-    The GAN generates minority samples via the adversarial learning objective:
-
-    \[
-    \min_G \max_D 
-    \mathbb{E}[\log D(x)] + \mathbb{E}[\log (1 - D(G(z)))]
-    \]
-
-    \paragraph{Reason:}  
-    GANs produce more realistic synthetic samples compared to linear interpolation methods like SMOTE, potentially improving generalization.
-
-    \paragraph{Outcome:}  
-    Two balanced training sets were created:  
-    \begin{itemize}
-        \item One balanced using SMOTE  
-        \item One balanced using GAN-generated fraud samples  
-    \end{itemize}
-
-    These separate balanced datasets allow direct comparison of resampling strategies.
-
-    % -----------------------------------------------------------
-
-    \subsection*{Feature Selection inside the Pipeline}
-
-    After balancing, feature selection was incorporated within the pipeline to reduce noise and identify informative attributes.  
-    The following scikit-learn tools were used:
-
-    \begin{itemize}
-        \item \texttt{SelectKBest}
-        \item \texttt{mutual\_info\_classif} (non-linear dependency measure)
-        \item \texttt{f\_classif} (ANOVA F-test for linear relationships)
-    \end{itemize}
-
-    \paragraph{Reason:}  
-    Different models benefit from different types of feature relationships. Combining MI-based and ANOVA-based feature selection offers better robustness across classifiers.
-
-    \paragraph{Outcome:}  
-    The most relevant transformed features (Time, Amount, PCA components) were retained, improving both training efficiency and interpretability.
-
-    % -----------------------------------------------------------
-
-    \subsection*{Prototype Selection for Noise Reduction}
-
-    To further refine the training data after SMOTE balancing, prototype selection techniques were applied:
-
-    \begin{itemize}
-        \item \texttt{EditedNearestNeighbours (ENN)}
-        \item \texttt{TomekLinks}
-    \end{itemize}
-
-    \paragraph{Reason:}  
-    Oversampling often increases class overlap. Prototype selection removes ambiguous or noisy samples by evaluating local neighbor structure.
-
-    \paragraph{Outcome:}  
-    Cleaner class boundaries were obtained, reducing overlapping regions and improving classifier stability.
-
-    % -----------------------------------------------------------
-
-    \subsection*{Assembly of the Balancing Pipeline}
-
-    The entire balancing process—SMOTE, feature selection, and optional prototype selection—was encapsulated in an \texttt{imblearn} pipeline.  
-    GAN-based balanced data was integrated separately and passed downstream for training.
-
-    \begin{figure}[H]
-        \centering
-        % \includegraphics[]{balancing_pipeline.png}
-        \caption{High-level structure of the data balancing and feature-selection pipeline.}
-    \end{figure}
-
-    % -----------------------------------------------------------
-
-    \subsection*{Final Output for Model Training}
-
-    After executing all steps, the pipeline returned the following:
-
-    \begin{itemize}
-        \item Balanced training inputs: $X_{\text{train, SMOTE}}$, $X_{\text{train, GAN}}$
-        \item Validation and test sets (unchanged): $X_{\text{valid}}, X_{\text{test}}$
-        \item Corresponding label sets: $y_{\text{train}}, y_{\text{valid}}, y_{\text{test}}$
-        \item Updated \textit{feature\_names} list with all engineered and selected features
-    \end{itemize}
-
-    \paragraph{Outcome:}  
-    Two fully balanced, feature-selected, noise-reduced datasets were obtained.  
-    These datasets formed the foundation for the upcoming model training phase.
-
-% ================================
-% Model Training
-% ================================
-\section*{Pipeline: Model Training Setup}
-
-After completing data preprocessing, feature engineering, scaling, and the construction of balanced training datasets, the final stage of this chapter involved preparing the machine learning models for training. The objective of this step was to establish a consistent and controlled training environment for all classifiers used in the study.
-
-A diverse set of machine learning algorithms was selected to represent multiple learning paradigms, including linear models, probabilistic classifiers, tree-based learners, and gradient-boosting ensembles. The models used in this research are:
-
-\begin{itemize}
-    \item Logistic Regression (LR)
-    \item Na\"ive Bayes (NB)
-    \item Decision Tree Classifier (DT)
-    \item Random Forest Classifier (RF)
-    \item XGBoost Classifier (XGB)
-    \item LightGBM Classifier (LGBM)
-\end{itemize}
-
-These models were chosen because they collectively cover a wide range of learning behaviours—simple linear decision boundaries, probabilistic inference, hierarchical rule-based patterns, and complex nonlinear interactions via ensemble boosting. This diversity allows for a thorough comparison of model performance under different data transformations and preprocessing conditions.
-
-Each classifier was trained using the preprocessed and balanced datasets prepared in the previous pipelines. The \texttt{Pipeline} utility from \texttt{scikit-learn} and \texttt{imblearn} was used to ensure that feature transformations, scaling, and preprocessing steps were applied consistently during both training and validation. Hyperparameter tuning and validation strategies were standardized across all models to maintain fairness and reproducibility.
-
-At the end of this stage, each model had been successfully trained on its respective prepared training data, producing fitted models that were ready for performance evaluation.
-
-\paragraph{Cross-Validation and Overfitting Checks}
-To ensure that the trained models were evaluated reliably and without dependence on a single train--test split, each classifier was validated using \texttt{StratifiedKFold} with $k = 5$. Stratification preserved the original class distribution in every fold, which is essential for imbalanced fraud datasets. The \texttt{cross\_validate} function from \texttt{scikit-learn} was used to measure performance across all folds under a consistent evaluation protocol.
-
-After training, each model was examined for signs of overfitting by comparing its cross-validation performance with validation-set performance. This procedure helped identify models that generalized well versus those that showed high variance. The detailed performance outcomes and overfitting analysis are presented in the next chapter.
+    
+    Simple linear decision limits, probabilistic inference, hierarchical rule-based patterns, and complicated nonlinear interactions via ensemble boosting are just a few of the learning behaviors that these models together encompass, which is why they were selected.  This variety makes it possible to compare model performance in detail under various preprocessing and data transformation scenarios.
+    
+    The preprocessed and balanced datasets created in the earlier pipelines were used to train each classifier.  To guarantee that feature transformations, scaling, and preprocessing procedures were implemented consistently throughout training and validation, the \texttt{Pipeline} utility from \texttt{scikit-learn} and \texttt{imblearn} was utilized.  To ensure fairness and reproducibility, hyperparameter tuning and validation techniques were standardized for all models.
+    
+    By the time this phase ended, every model had been effectively trained on the corresponding training data that had been prepared, resulting in fitted models that were prepared for performance assessment.
+    
+    \paragraph{Cross-Validation and Overfitting Checks}
+    Each classifier was validated using \texttt{StratifiedKFold} with $k = 5$ to guarantee that the trained models were assessed consistently and without reliance on a single train--test split.  For imbalanced fraud datasets, stratification is crucial since it maintained the initial class distribution in each fold.  Under a uniform evaluation strategy, performance was measured across all folds using the \texttt{cross\_validate} function from \texttt{scikit-learn}.
+    
+    Each model's cross-validation and validation-set performance were compared after training to look for indications of overfitting.  This process made it easier to distinguish between models with large variance and those that generalized well.  The following chapter presents the overfitting analysis and comprehensive performance results.
